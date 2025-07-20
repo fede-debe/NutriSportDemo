@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.federico.auth.component.GoogleButton
+import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
 import com.nutrisportdemo.shared.Alpha
 import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.Surface
@@ -68,29 +69,29 @@ fun AuthScreen() {
 
                 }
 
-//                GoogleButtonUiContainerFirebase(linkAccount = false, onResult = { result ->
-//                    result.onSuccess { user ->
-//                        messageBarState.addSuccess("Authentication successful!")
-//                        loadingState = false
-//                    }.onFailure { error ->
-//                        if (error.message?.contains("A network error") == true) {
-//                            messageBarState.addError("Internet connection unavailable")
-//                        } else if (error.message?.contains("Idtoken is null") == true) {
-//                            messageBarState.addError("Sign in canceled")
-//                        } else {
-//                            messageBarState.addError(message = error.message ?: "Unknow")
-//                        }
-//                        loadingState = false
-//                    }
-//                }) {
+                GoogleButtonUiContainerFirebase(linkAccount = false, onResult = { result ->
+                    result.onSuccess { user ->
+                        messageBarState.addSuccess("Authentication successful!")
+                        loadingState = false
+                    }.onFailure { error ->
+                        if (error.message?.contains("A network error") == true) {
+                            messageBarState.addError("Internet connection unavailable")
+                        } else if (error.message?.contains("Idtoken is null") == true) {
+                            messageBarState.addError("Sign in canceled")
+                        } else {
+                            messageBarState.addError(message = error.message ?: "Unknow")
+                        }
+                        loadingState = false
+                    }
+                }) {
                     GoogleButton(
                         loading = loadingState,
                         onClick = {
                             loadingState = true
-//                            this@GoogleButtonUiContainerFirebase.onClick()
+                            this@GoogleButtonUiContainerFirebase.onClick()
                         }
                     )
-//                }
+                }
             }
         }
     }
