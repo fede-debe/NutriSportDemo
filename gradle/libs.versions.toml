@@ -8,7 +8,7 @@ androidx-lifecycle = "2.9.1"
 composeMultiplatform = "1.8.2"
 kotlin = "2.2.0"
 
-navigation = "2.6.0"
+navigation = "2.9.0-beta03"
 auth = "2.3.1"   # for kmpauth-google / firebase
 notifier = "1.5.1"   # for kmpnotifier
 firebase = "2.1.0"   # GitLive Firebase BOM version
