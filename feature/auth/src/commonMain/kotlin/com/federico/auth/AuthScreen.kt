@@ -23,8 +23,11 @@ import com.mmk.kmpauth.firebase.google.GoogleButtonUiContainerFirebase
 import com.nutrisportdemo.shared.Alpha
 import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.Surface
+import com.nutrisportdemo.shared.SurfaceBrand
+import com.nutrisportdemo.shared.SurfaceError
 import com.nutrisportdemo.shared.TextPrimary
 import com.nutrisportdemo.shared.TextSecondary
+import com.nutrisportdemo.shared.TextWhite
 import com.nutrisportdemo.shared.bebasNeueFont
 import rememberMessageBarState
 
@@ -41,7 +44,11 @@ fun AuthScreen() {
                 bottom = paddingValues.calculateBottomPadding()
             ),
             messageBarState = messageBarState,
-            errorMaxLines = 2
+            errorMaxLines = 2,
+            errorContainerColor = SurfaceError,
+            errorContentColor = TextWhite,
+            successContainerColor = SurfaceBrand,
+            successContentColor = TextPrimary
         ) {
             Column(modifier = Modifier.fillMaxSize().padding(all = 24.dp)) {
                 // take full space of the screen weight = 1f
