@@ -29,10 +29,13 @@ import com.nutrisportdemo.shared.TextPrimary
 import com.nutrisportdemo.shared.TextSecondary
 import com.nutrisportdemo.shared.TextWhite
 import com.nutrisportdemo.shared.bebasNeueFont
+import org.koin.compose.viewmodel.koinViewModel
 import rememberMessageBarState
 
 @Composable
 fun AuthScreen() {
+
+    val viewModel = koinViewModel<AuthViewModel>()
     val messageBarState = rememberMessageBarState()
     var loadingState by remember { mutableStateOf(false) }
 
@@ -78,7 +81,11 @@ fun AuthScreen() {
 
                 GoogleButtonUiContainerFirebase(linkAccount = false, onResult = { result ->
                     result.onSuccess { user ->
-                        messageBarState.addSuccess("Authentication successful!")
+                        viewModel.createCustomer(
+                            user = user,
+                            onSuccess = {  messageBarState.addSuccess("Authentication successful!") },
+                            onError = { message -> messageBarState.addError(message)}
+                        )
                         loadingState = false
                     }.onFailure { error ->
                         if (error.message?.contains("A network error") == true) {
