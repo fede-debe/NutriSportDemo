@@ -49,9 +49,12 @@ kotlin {
             implementation(libs.kmpauth.google)
             implementation(libs.firebase.app)
 
+            implementation(libs.koin.compose)
+
             implementation(project(path = ":navigation"))
             implementation(project(path = ":shared"))
             implementation(project(path = ":di"))
+            implementation(project(path = ":data"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

@@ -8,9 +8,9 @@ import com.federico.auth.AuthScreen
 import com.federico.home.HomeGraphScreen
 
 @Composable
-fun SetupNavigation() {
+fun SetupNavigation(startDestination: Screen = Screen.Auth) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.Auth) {
+    NavHost(navController = navController, startDestination = startDestination) {
         composable<Screen.Auth> {
             AuthScreen()
         }
