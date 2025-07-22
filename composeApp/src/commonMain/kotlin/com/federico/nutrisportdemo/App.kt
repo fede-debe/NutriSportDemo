@@ -10,18 +10,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.federico.data.domain.CustomerRepository
+import com.federico.navigation.Screen
 import com.federico.navigation.SetupNavigation
 import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
 import com.nutrisportdemo.shared.Constants
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.koinInject
 
 @Composable
 @Preview
 fun App() {
     MaterialTheme {
-
+        val customerRepository = koinInject<CustomerRepository>()
         var appReady by remember { mutableStateOf(false) }
+        val isUserAuthenticated = remember { customerRepository.getCurrentUserId() != null }
+        val startDestination = remember {
+            when {
+                isUserAuthenticated -> Screen.HomeGraph
+                else -> Screen.Auth
+            }
+        }
 
         LaunchedEffect(Unit) {
             GoogleAuthProvider.create(credentials = GoogleAuthCredentials(serverId = Constants.WEB_CLIENT_ID))
@@ -29,7 +39,7 @@ fun App() {
         }
 
         AnimatedVisibility(modifier = Modifier.fillMaxSize(), visible = appReady) {
-            SetupNavigation()
+            SetupNavigation(startDestination = startDestination)
         }
     }
 }
