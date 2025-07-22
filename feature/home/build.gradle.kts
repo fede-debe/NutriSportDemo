@@ -22,7 +22,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "auth"
+            baseName = "home"
             isStatic = true
         }
     }
@@ -38,11 +38,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation(libs.messagebar.kmp)
-
-            implementation(libs.kmpauth.google)
-            implementation(libs.kmpauth.firebase)
-
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
@@ -56,7 +51,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.federico.auth"
+    namespace = "com.federico.home"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
