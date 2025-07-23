@@ -12,6 +12,7 @@ import nutrisportdemo.shared.generated.resources.dollar
 import nutrisportdemo.shared.generated.resources.edit
 import nutrisportdemo.shared.generated.resources.google_logo
 import nutrisportdemo.shared.generated.resources.grid
+import nutrisportdemo.shared.generated.resources.home
 import nutrisportdemo.shared.generated.resources.log_in
 import nutrisportdemo.shared.generated.resources.log_out
 import nutrisportdemo.shared.generated.resources.map_pin
@@ -39,10 +40,11 @@ object Resources {
         val Check = Res.drawable.check
         val Edit = Res.drawable.edit
         val Menu = Res.drawable.menu
+        val Home = Res.drawable.home
         val BackArrow = Res.drawable.back_arrow
         val RightArrow = Res.drawable.right_arrow
         val ShoppingCart = Res.drawable.shopping_cart_image
-        val Grid = Res.drawable.grid
+        val Categories = Res.drawable.grid
         val Dollar = Res.drawable.dollar
         val MapPin = Res.drawable.map_pin
         val Close = Res.drawable.close
@@ -52,7 +54,6 @@ object Resources {
     }
 
     object Image {
-        val ShoppingCart = Res.drawable.shopping_cart_image
         val Checkmark = Res.drawable.checkmark_image
         val Cat = Res.drawable.cat
         val GoogleLogo = Res.drawable.google_logo
