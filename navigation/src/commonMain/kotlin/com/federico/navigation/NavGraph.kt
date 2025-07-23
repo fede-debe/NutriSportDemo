@@ -12,7 +12,12 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = startDestination) {
         composable<Screen.Auth> {
-            AuthScreen()
+            AuthScreen(navigateToHome = {
+                navController.navigate(Screen.HomeGraph) {
+                    /** Remove the auth screen from the backstack */
+                    popUpTo<Screen.Auth> { inclusive = true }
+                }
+            })
         }
         composable<Screen.HomeGraph> {
             HomeGraphScreen()
