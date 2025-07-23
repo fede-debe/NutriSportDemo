@@ -1,11 +1,14 @@
 package com.federico.home
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,11 +27,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.federico.home.component.BottomBar
+import com.federico.home.component.CustomDrawer
 import com.federico.home.domain.BottomBarDestination
 import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.IconPrimary
 import com.nutrisportdemo.shared.Resources
 import com.nutrisportdemo.shared.Surface
+import com.nutrisportdemo.shared.SurfaceLighter
 import com.nutrisportdemo.shared.TextPrimary
 import com.nutrisportdemo.shared.bebasNeueFont
 import com.nutrisportdemo.shared.navigation.Screen
@@ -59,70 +64,78 @@ fun HomeGraphScreen() {
         }
     }
 
-    Scaffold(containerColor = Surface, topBar = {
-        CenterAlignedTopAppBar(
-            title = {
-                AnimatedContent(targetState = selectedDestination) { destination ->
-                    Text(
-                        destination.title,
-                        fontFamily = bebasNeueFont(),
-                        fontSize = FontSize.LARGE,
-                        color = TextPrimary
-                    )
-                }
-            },
-            navigationIcon = {
-                IconButton(onClick = {}) {
-                    Icon(
-                        painter = painterResource(Resources.Icon.Menu),
-                        contentDescription = "Menu icon",
-                        tint = IconPrimary
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = Surface,
-                scrolledContainerColor = Surface,
-                navigationIconContentColor = IconPrimary,
-                titleContentColor = TextPrimary,
-                actionIconContentColor = IconPrimary
-            )
+    Box(modifier = Modifier.fillMaxSize().background(SurfaceLighter).systemBarsPadding()) {
+        CustomDrawer(
+            onProfileClick = {},
+            onContactUsClick = {},
+            onSignOutClick = {},
+            onAdminPanelClick = {}
         )
-    }) { paddingValues ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(
-                top = paddingValues.calculateTopPadding(),
-                bottom = paddingValues.calculateBottomPadding()
-            )
-        ) {
-            NavHost(
-                modifier = Modifier.weight(1f),
-                navController = navController,
-                startDestination = Screen.ProductsOverview
-            ) {
-                composable<Screen.ProductsOverview> {}
-                composable<Screen.Cart> {}
-                composable<Screen.Categories> {}
-            }
-            Spacer(modifier = Modifier.height(12.dp))
-            BottomBar(
-                selected = selectedDestination,
-                onSelect = { destination ->
-                    navController.navigate(destination.screen) {
-                        /**
-                         * Pop up to the start destination of the graph when navigate back from a top destination.
-                         * launchSingleTop is being used to not repeat the same screen in the backstack.
-                         *
-                         * When pop from the ProductsOverview screen, inclusive = false make sure it is kept in the backstack.
-                         */
-                        launchSingleTop = true
-                        popUpTo<Screen.ProductsOverview> {
-                            saveState = true
-                            inclusive = false
-                        }
-                        restoreState = true
+        Scaffold(containerColor = Surface, topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    AnimatedContent(targetState = selectedDestination) { destination ->
+                        Text(
+                            destination.title,
+                            fontFamily = bebasNeueFont(),
+                            fontSize = FontSize.LARGE,
+                            color = TextPrimary
+                        )
                     }
-                })
+                },
+                navigationIcon = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            painter = painterResource(Resources.Icon.Menu),
+                            contentDescription = "Menu icon",
+                            tint = IconPrimary
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Surface,
+                    scrolledContainerColor = Surface,
+                    navigationIconContentColor = IconPrimary,
+                    titleContentColor = TextPrimary,
+                    actionIconContentColor = IconPrimary
+                )
+            )
+        }) { paddingValues ->
+            Column(
+                modifier = Modifier.fillMaxSize().padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding()
+                )
+            ) {
+                NavHost(
+                    modifier = Modifier.weight(1f),
+                    navController = navController,
+                    startDestination = Screen.ProductsOverview
+                ) {
+                    composable<Screen.ProductsOverview> {}
+                    composable<Screen.Cart> {}
+                    composable<Screen.Categories> {}
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                BottomBar(
+                    selected = selectedDestination,
+                    onSelect = { destination ->
+                        navController.navigate(destination.screen) {
+                            /**
+                             * Pop up to the start destination of the graph when navigate back from a top destination.
+                             * launchSingleTop is being used to not repeat the same screen in the backstack.
+                             *
+                             * When pop from the ProductsOverview screen, inclusive = false make sure it is kept in the backstack.
+                             */
+                            launchSingleTop = true
+                            popUpTo<Screen.ProductsOverview> {
+                                saveState = true
+                                inclusive = false
+                            }
+                            restoreState = true
+                        }
+                    })
+            }
         }
     }
 }
