@@ -42,6 +42,7 @@ kotlin {
             implementation(libs.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
 
+            implementation(project(path = ":shared"))
             implementation(project(path = ":feature:auth"))
             implementation(project(path = ":feature:home"))
         }

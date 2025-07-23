@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.federico.auth.AuthScreen
 import com.federico.home.HomeGraphScreen
+import com.nutrisportdemo.shared.navigation.Screen
 
 @Composable
 fun SetupNavigation(startDestination: Screen = Screen.Auth) {

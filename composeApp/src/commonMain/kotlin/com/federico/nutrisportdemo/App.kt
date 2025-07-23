@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.federico.data.domain.CustomerRepository
-import com.federico.navigation.Screen
+import com.nutrisportdemo.shared.navigation.Screen
 import com.federico.navigation.SetupNavigation
 import com.mmk.kmpauth.google.GoogleAuthCredentials
 import com.mmk.kmpauth.google.GoogleAuthProvider
