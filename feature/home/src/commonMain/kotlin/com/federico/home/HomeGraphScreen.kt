@@ -1,5 +1,6 @@
 package com.federico.home
 
+import ContentWithMessageBar
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
@@ -54,6 +55,8 @@ import com.nutrisportdemo.shared.bebasNeueFont
 import com.nutrisportdemo.shared.navigation.Screen
 import com.nutrisportdemo.shared.util.getScreenWidth
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.viewmodel.koinViewModel
+import rememberMessageBarState
 
 /** We can't intercept the system back stack system in the current version of a compose navigation library to update the currentDestination accordingly
  * We are using the navController instead.
@@ -63,7 +66,12 @@ import org.jetbrains.compose.resources.painterResource
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeGraphScreen() {
+fun HomeGraphScreen(
+    navigateToAuth: () -> Unit
+) {
+    val viewModel = koinViewModel<HomeGraphViewModel>()
+    val messageBarState = rememberMessageBarState()
+
     val navController = rememberNavController()
 
     val currentDestination = navController.currentBackStackEntryAsState()
@@ -84,10 +92,12 @@ fun HomeGraphScreen() {
     var drawerState by remember { mutableStateOf(CustomDrawerState.Closed) }
 
     val offsetValue by remember { derivedStateOf { (screenWidth / 1.5).dp } }
+
     /** if drawer is closed we don't want to animate the home graph --> 0.dp */
     val animatedOffset by animateDpAsState(
         targetValue = if (drawerState.isOpened()) offsetValue else 0.dp
     )
+
     /** when drawer is opened the size of home graph is 90% of the screen width else full available size(1f) */
     val animatedScale by animateFloatAsState(
         targetValue = if (drawerState.isOpened()) 0.9f else 1f
@@ -105,16 +115,30 @@ fun HomeGraphScreen() {
         CustomDrawer(
             onProfileClick = {},
             onContactUsClick = {},
-            onSignOutClick = {},
+            onSignOutClick = {
+                viewModel.signOut(
+                    onSuccess = navigateToAuth,
+                    onError = { message ->
+                        messageBarState.addError(message)
+                    }
+                )
+            },
             onAdminPanelClick = {}
         )
         /** we need extra box to provide modifier values to scale down the scaffold */
         Box(
             modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(animatedRadius))
                 .offset(x = animatedOffset).scale(scale = animatedScale)
-                .shadow(elevation = 20.dp, shape = RoundedCornerShape(animatedRadius), ambientColor = Color.Black.copy(
-                    Alpha.DISABLED), spotColor = Color.Black.copy(
-                    Alpha.DISABLED))
+                .shadow(
+                    elevation = 20.dp,
+                    shape = RoundedCornerShape(animatedRadius),
+                    ambientColor = Color.Black.copy(
+                        Alpha.DISABLED
+                    ),
+                    spotColor = Color.Black.copy(
+                        Alpha.DISABLED
+                    )
+                )
         ) {
             Scaffold(containerColor = Surface, topBar = {
                 CenterAlignedTopAppBar(
@@ -166,40 +190,45 @@ fun HomeGraphScreen() {
                     )
                 )
             }) { paddingValues ->
-                Column(
+                ContentWithMessageBar(
                     modifier = Modifier.fillMaxSize().padding(
                         top = paddingValues.calculateTopPadding(),
                         bottom = paddingValues.calculateBottomPadding()
-                    )
+                    ),
+                    messageBarState = messageBarState,
+                    errorMaxLines = 2,
+                    contentBackgroundColor = Surface
                 ) {
-                    NavHost(
-                        modifier = Modifier.weight(1f),
-                        navController = navController,
-                        startDestination = Screen.ProductsOverview
-                    ) {
-                        composable<Screen.ProductsOverview> {}
-                        composable<Screen.Cart> {}
-                        composable<Screen.Categories> {}
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    BottomBar(
-                        selected = selectedDestination,
-                        onSelect = { destination ->
-                            navController.navigate(destination.screen) {
-                                /**
-                                 * Pop up to the start destination of the graph when navigate back from a top destination.
-                                 * launchSingleTop is being used to not repeat the same screen in the backstack.
-                                 *
-                                 * When pop from the ProductsOverview screen, inclusive = false make sure it is kept in the backstack.
-                                 */
-                                launchSingleTop = true
-                                popUpTo<Screen.ProductsOverview> {
-                                    saveState = true
-                                    inclusive = false
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        NavHost(
+                            modifier = Modifier.weight(1f),
+                            navController = navController,
+                            startDestination = Screen.ProductsOverview
+                        ) {
+                            composable<Screen.ProductsOverview> {}
+                            composable<Screen.Cart> {}
+                            composable<Screen.Categories> {}
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                        BottomBar(
+                            selected = selectedDestination,
+                            onSelect = { destination ->
+                                navController.navigate(destination.screen) {
+                                    /**
+                                     * Pop up to the start destination of the graph when navigate back from a top destination.
+                                     * launchSingleTop is being used to not repeat the same screen in the backstack.
+                                     *
+                                     * When pop from the ProductsOverview screen, inclusive = false make sure it is kept in the backstack.
+                                     */
+                                    launchSingleTop = true
+                                    popUpTo<Screen.ProductsOverview> {
+                                        saveState = true
+                                        inclusive = false
+                                    }
+                                    restoreState = true
                                 }
-                                restoreState = true
-                            }
-                        })
+                            })
+                    }
                 }
             }
         }

@@ -3,6 +3,7 @@ package com.federico.di
 import com.federico.auth.AuthViewModel
 import com.federico.data.CustomerRepositoryImpl
 import com.federico.data.domain.CustomerRepository
+import com.federico.home.HomeGraphViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.dsl.viewModelOf
@@ -16,6 +17,7 @@ import org.koin.dsl.module
 val sharedModule = module {
     single<CustomerRepository> { CustomerRepositoryImpl() }
     viewModelOf(::AuthViewModel)
+    viewModelOf(::HomeGraphViewModel)
 }
 
 /** We will pass the Android context as config parameter*/
