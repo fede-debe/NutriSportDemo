@@ -23,7 +23,7 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
         composable<Screen.HomeGraph> {
             HomeGraphScreen(navigateToAuth = {
                 navController.navigate(Screen.Auth) {
-                    /** Remove the auth screen from the backstack */
+                    /** Remove the home graph screen from the backstack */
                     popUpTo<Screen.HomeGraph> { inclusive = true }
                 }
             })
