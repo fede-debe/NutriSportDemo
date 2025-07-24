@@ -1,5 +1,6 @@
 package com.federico.data.domain
 
+import com.nutrisportdemo.shared.util.RequestState
 import dev.gitlive.firebase.auth.FirebaseUser
 
 interface CustomerRepository {
@@ -9,4 +10,9 @@ interface CustomerRepository {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     )
+    /** use Unit as no value, we could use a Boolean to return if we succeeded or not.
+     * Since the RequestState class contains the error and success state,
+     * we don't need to return a  value and use Unit.
+     * */
+    suspend fun signOut(): RequestState<Unit>
 }
