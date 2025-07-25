@@ -13,6 +13,7 @@ import nutrisportdemo.shared.generated.resources.edit
 import nutrisportdemo.shared.generated.resources.google_logo
 import nutrisportdemo.shared.generated.resources.grid
 import nutrisportdemo.shared.generated.resources.home
+import nutrisportdemo.shared.generated.resources.india
 import nutrisportdemo.shared.generated.resources.log_in
 import nutrisportdemo.shared.generated.resources.log_out
 import nutrisportdemo.shared.generated.resources.map_pin
@@ -22,9 +23,11 @@ import nutrisportdemo.shared.generated.resources.paypal_logo
 import nutrisportdemo.shared.generated.resources.plus
 import nutrisportdemo.shared.generated.resources.right_arrow
 import nutrisportdemo.shared.generated.resources.search
+import nutrisportdemo.shared.generated.resources.serbia
 import nutrisportdemo.shared.generated.resources.shopping_cart
 import nutrisportdemo.shared.generated.resources.shopping_cart_image
 import nutrisportdemo.shared.generated.resources.unlock
+import nutrisportdemo.shared.generated.resources.usa
 import nutrisportdemo.shared.generated.resources.user
 import nutrisportdemo.shared.generated.resources.vertical_menu
 
@@ -60,5 +63,11 @@ object Resources {
         val Cat = Res.drawable.cat
         val GoogleLogo = Res.drawable.google_logo
         val PaypalLogo = Res.drawable.paypal_logo
+    }
+
+    object Flag {
+        val India = Res.drawable.india
+        val Serbia = Res.drawable.serbia
+        val Usa = Res.drawable.usa
     }
 }
