@@ -50,6 +50,7 @@ import com.nutrisportdemo.shared.SurfaceSecondary
 import com.nutrisportdemo.shared.TextPrimary
 import com.nutrisportdemo.shared.TextSecondary
 import com.nutrisportdemo.shared.component.CustomTextField
+import com.nutrisportdemo.shared.component.ErrorCard
 import com.nutrisportdemo.shared.domain.Country
 import org.jetbrains.compose.resources.painterResource
 
@@ -106,20 +107,24 @@ fun CountryPickerDialog(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    items(
-                        items = filteredCountries,
-                        key = { it.ordinal }
-                    ) { country ->
-                        CountryPicker(
-                            country = country,
-                            isSelected = selectedCountry == country,
-                            onSelect = { selectedCountry = country }
-                        )
+                if (filteredCountries.isNotEmpty()) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        items(
+                            items = filteredCountries,
+                            key = { it.ordinal }
+                        ) { country ->
+                            CountryPicker(
+                                country = country,
+                                isSelected = selectedCountry == country,
+                                onSelect = { selectedCountry = country }
+                            )
+                        }
                     }
+                } else {
+                    ErrorCard(modifier = Modifier.weight(1f), message = "Country not found")
                 }
             }
         },
