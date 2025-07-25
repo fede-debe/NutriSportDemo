@@ -18,6 +18,8 @@ val SurfaceDarker = Gray
 val SurfaceBrand = Yellowish
 val SurfaceError = Red
 
+val BorderIdle = GrayDarker
+val BorderError = Red
 
 val TextPrimary = Black
 val TextSecondary = Orange
