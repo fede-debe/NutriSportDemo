@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.federico.auth.AuthScreen
 import com.federico.home.HomeGraphScreen
+import com.federico.profile.ProfileScreen
 import com.nutrisportdemo.shared.navigation.Screen
 
 @Composable
@@ -26,7 +27,12 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
                     /** Remove the home graph screen from the backstack */
                     popUpTo<Screen.HomeGraph> { inclusive = true }
                 }
+            }, navigateToProfile = {
+                navController.navigate(Screen.Profile)
             })
+        }
+        composable<Screen.Profile> {
+            ProfileScreen()
         }
     }
 }
