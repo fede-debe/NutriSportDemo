@@ -34,7 +34,7 @@ fun AlertTextField(
         modifier = modifier.background(SurfaceLighter)
             .border(width = 1.dp, color = BorderIdle, shape = RoundedCornerShape(6.dp))
             .clip(RoundedCornerShape(6.dp)).clickable { onClick() }
-            .padding(vertical = 20.dp, horizontal = 16.dp),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
