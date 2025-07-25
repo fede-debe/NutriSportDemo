@@ -1,4 +1,4 @@
-package com.federico.profile.component
+package com.nutrisportdemo.shared.component
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.border

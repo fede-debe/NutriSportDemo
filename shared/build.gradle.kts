@@ -40,6 +40,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
             implementation(libs.kotlinx.serialization.json)
+
+            implementation(libs.androidx.compose.ui.tooling)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

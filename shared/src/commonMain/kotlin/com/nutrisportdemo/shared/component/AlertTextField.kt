@@ -1,4 +1,4 @@
-package com.federico.profile.component
+package com.nutrisportdemo.shared.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
