@@ -19,12 +19,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.nutrisportdemo.shared.component.AlertTextField
-import com.nutrisportdemo.shared.component.CustomTextField
 import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.Resources
+import com.nutrisportdemo.shared.component.AlertTextField
+import com.nutrisportdemo.shared.component.CustomTextField
 import com.nutrisportdemo.shared.component.PrimaryButton
 import com.nutrisportdemo.shared.component.ProfileForm
+import com.nutrisportdemo.shared.component.dialog.CountryPickerDialog
+import com.nutrisportdemo.shared.domain.Country
 import org.jetbrains.compose.resources.DrawableResource
 
 @Preview(showBackground = true)
@@ -118,7 +120,9 @@ class PrimaryButtonVariant : PreviewParameterProvider<Boolean> {
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileFormPreview() {
+fun ProfileFormPreview(
+    @PreviewParameter(ProfileFormVariant::class) profile: ProfileFormData
+) {
     MaterialTheme {
         Column(
             modifier = Modifier
@@ -127,25 +131,109 @@ fun ProfileFormPreview() {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = "PrimaryButton",
+                text = "ProfileForm (for ${profile.firstName.ifEmpty { "Empty Fields" }})",
                 fontSize = FontSize.REGULAR,
                 fontWeight = FontWeight.SemiBold
             )
 
             ProfileForm(
-                firstName = "",
+                country = profile.country,
+                onCountrySelected = {},
+                firstName = profile.firstName,
                 onFirstNameChange = {},
-                lastName = "",
+                lastName = profile.lastName,
                 onLastNameChange = {},
-                email = "",
-                city = "",
+                email = profile.email,
+                city = profile.city,
                 onCityChange = {},
-                postalCode = null,
+                postalCode = profile.postalCode,
                 onPostalCodeChange = {},
-                address = "",
+                address = profile.address,
                 onAddressChange = {},
-                phoneNumber = null,
-                onPhoneNumberChange = {})
+                phoneNumber = profile.phoneNumber,
+                onPhoneNumberChange = {}
+            )
         }
     }
 }
+
+data class ProfileFormData(
+    val country: Country,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val city: String,
+    val postalCode: Int?,
+    val address: String,
+    val phoneNumber: String?
+)
+
+class ProfileFormVariant : PreviewParameterProvider<ProfileFormData> {
+    override val values: Sequence<ProfileFormData> = sequenceOf(
+        // All fields empty — triggers all validation errors
+        ProfileFormData(
+            country = Country.Serbia,
+            firstName = "",
+            lastName = "",
+            email = "",
+            city = "",
+            postalCode = null,
+            address = "",
+            phoneNumber = null
+        ),
+        // Valid profile data
+        ProfileFormData(
+            country = Country.India,
+            firstName = "Amit",
+            lastName = "Kumar",
+            email = "amit.kumar@example.com",
+            city = "Mumbai",
+            postalCode = 400001,
+            address = "Marine Drive",
+            phoneNumber = "9876543210"
+        ),
+        // Only phone number is too short
+        ProfileFormData(
+            country = Country.Serbia,
+            firstName = "John",
+            lastName = "Doe",
+            email = "john.doe@example.com",
+            city = "Belgrade",
+            postalCode = 11000,
+            address = "Main St 10",
+            phoneNumber = "12"
+        )
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CountryPickerDialogPreview(
+    @PreviewParameter(CountryPickerDialogVariant::class) country: Country
+) {
+    MaterialTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "CountryPickerDialog - query: \"$country\"",
+                fontSize = FontSize.REGULAR,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            CountryPickerDialog(
+                country = country,
+                onDismiss = {},
+                onConfirmClick = {}
+            )
+        }
+    }
+}
+
+class CountryPickerDialogVariant : PreviewParameterProvider<Country> {
+    override val values = sequenceOf(Country.Serbia, Country.Serbia, Country.India)
+}
+
