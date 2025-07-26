@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -19,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.nutrisportdemo.shared.component.dialog.CountryPickerDialog
+import com.nutrisportdemo.shared.component.textField.AlertTextField
+import com.nutrisportdemo.shared.component.textField.CustomTextField
 import com.nutrisportdemo.shared.domain.Country
 
 @Composable
@@ -31,11 +32,11 @@ fun ProfileForm(
     lastName: String,
     onLastNameChange: (String) -> Unit,
     email: String,
-    city: String,
+    city: String?,
     onCityChange: (String) -> Unit,
     postalCode: Int?,
     onPostalCodeChange: (Int?) -> Unit,
-    address: String,
+    address: String?,
     onAddressChange: (String) -> Unit,
     phoneNumber: String?,
     onPhoneNumberChange: (String) -> Unit,
@@ -54,10 +55,6 @@ fun ProfileForm(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(
-                horizontal = 24.dp,
-                vertical = 12.dp
-            )
             .verticalScroll(state = rememberScrollState())
             .imePadding(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -75,7 +72,7 @@ fun ProfileForm(
             placeholder = "Last Name",
             isError = lastName.length !in 3..50
         )
-
+        /** Disabled field since the email is provided after the authentication process */
         CustomTextField(
             value = email,
             onValueChange = {},
@@ -84,10 +81,10 @@ fun ProfileForm(
         )
 
         CustomTextField(
-            value = city,
+            value = city ?: "",
             onValueChange = onCityChange,
             placeholder = "City",
-            isError = city.length !in 3..50
+            isError = city?.length !in 3..50
         )
 
         CustomTextField(
@@ -98,10 +95,10 @@ fun ProfileForm(
         )
 
         CustomTextField(
-            value = address,
+            value = address ?: "",
             onValueChange = onAddressChange,
             placeholder = "Address",
-            isError = address.length !in 3..50
+            isError = address?.length !in 3..50
         )
 
         Row(
