@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.Resources
-import com.nutrisportdemo.shared.component.AlertTextField
-import com.nutrisportdemo.shared.component.CustomTextField
+import com.nutrisportdemo.shared.component.textField.AlertTextField
+import com.nutrisportdemo.shared.component.textField.CustomTextField
 import com.nutrisportdemo.shared.component.PrimaryButton
 import com.nutrisportdemo.shared.component.ProfileForm
 import com.nutrisportdemo.shared.component.dialog.CountryPickerDialog

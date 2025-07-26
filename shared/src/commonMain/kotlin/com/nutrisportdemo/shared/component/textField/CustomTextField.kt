@@ -1,4 +1,4 @@
-package com.nutrisportdemo.shared.component
+package com.nutrisportdemo.shared.component.textField
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.border

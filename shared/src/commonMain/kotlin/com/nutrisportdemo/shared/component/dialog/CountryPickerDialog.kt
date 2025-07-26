@@ -49,8 +49,8 @@ import com.nutrisportdemo.shared.SurfaceLighter
 import com.nutrisportdemo.shared.SurfaceSecondary
 import com.nutrisportdemo.shared.TextPrimary
 import com.nutrisportdemo.shared.TextSecondary
-import com.nutrisportdemo.shared.component.CustomTextField
-import com.nutrisportdemo.shared.component.ErrorCard
+import com.nutrisportdemo.shared.component.textField.CustomTextField
+import com.nutrisportdemo.shared.component.card.ErrorCard
 import com.nutrisportdemo.shared.domain.Country
 import org.jetbrains.compose.resources.painterResource
 
