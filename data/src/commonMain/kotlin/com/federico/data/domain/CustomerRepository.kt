@@ -1,7 +1,9 @@
 package com.federico.data.domain
 
+import com.nutrisportdemo.shared.domain.Customer
 import com.nutrisportdemo.shared.util.RequestState
 import dev.gitlive.firebase.auth.FirebaseUser
+import kotlinx.coroutines.flow.Flow
 
 interface CustomerRepository {
     fun getCurrentUserId(): String?
@@ -10,6 +12,8 @@ interface CustomerRepository {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     )
+    /**  */
+    fun readCustomerFlow(): Flow<RequestState<Customer>>
     /** use Unit as no value, we could use a Boolean to return if we succeeded or not.
      * Since the RequestState class contains the error and success state,
      * we don't need to return a  value and use Unit.

@@ -32,7 +32,12 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
             })
         }
         composable<Screen.Profile> {
-            ProfileScreen()
+            ProfileScreen(
+                navigateBack = {
+                    /** pop our current screen from the back stack and navigate to the previous screen (HomeGraph) */
+                    navController.navigateUp()
+                }
+            )
         }
     }
 }
