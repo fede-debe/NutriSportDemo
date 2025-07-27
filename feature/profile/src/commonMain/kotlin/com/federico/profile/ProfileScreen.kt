@@ -1,5 +1,6 @@
 package com.federico.profile
 
+import ContentWithMessageBar
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +28,7 @@ import com.nutrisportdemo.shared.component.card.LoadingCard
 import com.nutrisportdemo.shared.util.DisplayResult
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
+import rememberMessageBarState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,6 +38,8 @@ fun ProfileScreen(
     val viewModel = koinViewModel<ProfileViewModel>()
     val screenReady = viewModel.screenReady
     val screenState = viewModel.screenState
+    val isFormValid = viewModel.isFormValid
+    val messageBarState = rememberMessageBarState()
 
     Scaffold(containerColor = Surface, topBar = {
         TopAppBar(
@@ -65,52 +69,66 @@ fun ProfileScreen(
             )
         )
     }) { paddingValues ->
-        Column(
-            modifier = Modifier.fillMaxSize().padding(
+        ContentWithMessageBar(
+            modifier = Modifier.padding(
                 top = paddingValues.calculateTopPadding(),
                 bottom = paddingValues.calculateBottomPadding()
-            ).padding(
-                horizontal = 24.dp
-            ).padding(top = 12.dp, bottom = 24.dp)
+            ), messageBarState = messageBarState, errorMaxLines = 2
         ) {
-            screenReady.DisplayResult(
-                onLoading = {
-                    LoadingCard(modifier = Modifier.fillMaxSize())
-                },
-                onSuccess = { state ->
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        screenState.apply {
-                            ProfileForm(
-                                modifier = Modifier.weight(1f),
-                                firstName = firstName,
-                                country = country,
-                                onCountrySelected = viewModel::updateCountry,
-                                onFirstNameChange = viewModel::updateFirstName,
-                                lastName = lastName,
-                                onLastNameChange = viewModel::updateLastName,
-                                email = email,
-                                city = city,
-                                onCityChange = viewModel::updateCity,
-                                postalCode = postalCode,
-                                onPostalCodeChange = viewModel::updatePostalCode,
-                                address = address,
-                                onAddressChange = viewModel::updateAddress,
-                                phoneNumber = phoneNumber?.number,
-                                onPhoneNumberChange = viewModel::updatePhoneNumber
-                            )
+            Column(
+                modifier = Modifier.fillMaxSize().padding(
+                    horizontal = 24.dp
+                ).padding(top = 12.dp, bottom = 24.dp)
+            ) {
+                screenReady.DisplayResult(
+                    onLoading = {
+                        LoadingCard(modifier = Modifier.fillMaxSize())
+                    },
+                    onSuccess = { state ->
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            screenState.apply {
+                                ProfileForm(
+                                    modifier = Modifier.weight(1f),
+                                    firstName = firstName,
+                                    country = country,
+                                    onCountrySelected = viewModel::updateCountry,
+                                    onFirstNameChange = viewModel::updateFirstName,
+                                    lastName = lastName,
+                                    onLastNameChange = viewModel::updateLastName,
+                                    email = email,
+                                    city = city,
+                                    onCityChange = viewModel::updateCity,
+                                    postalCode = postalCode,
+                                    onPostalCodeChange = viewModel::updatePostalCode,
+                                    address = address,
+                                    onAddressChange = viewModel::updateAddress,
+                                    phoneNumber = phoneNumber?.number,
+                                    onPhoneNumberChange = viewModel::updatePhoneNumber
+                                )
+                            }
+
+                            PrimaryButton(
+                                text = "Update",
+                                icon = Resources.Icon.Check,
+                                enabled = isFormValid,
+                                onClick = {
+                                    viewModel.updateCustomer(onSuccess = {
+                                        messageBarState.addSuccess("Successfully updated!")
+                                    }, onError = { message ->
+                                        messageBarState.addError(message = message)
+                                    })
+                                })
                         }
+                    },
+                    onError = { message ->
+                        ErrorCard(message = message, fontSize = FontSize.REGULAR)
 
-                        PrimaryButton(text = "Update", icon = Resources.Icon.Check, onClick = {})
                     }
-                },
-                onError = { message ->
-                    ErrorCard(message = message, fontSize = FontSize.REGULAR)
-
-                }
-            )
+                )
+            }
         }
     }
 }
