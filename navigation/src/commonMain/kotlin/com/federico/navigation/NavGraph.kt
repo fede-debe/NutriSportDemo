@@ -4,9 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.federico.admin_panel.AdminPanelScreen
 import com.federico.auth.AuthScreen
 import com.federico.home.HomeGraphScreen
+import com.federico.manage_product.ManageProductScreen
 import com.federico.profile.ProfileScreen
 import com.nutrisportdemo.shared.navigation.Screen
 
@@ -23,14 +25,15 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
             })
         }
         composable<Screen.HomeGraph> {
-            HomeGraphScreen(navigateToAuth = {
-                navController.navigate(Screen.Auth) {
-                    /** Remove the home graph screen from the backstack */
-                    popUpTo<Screen.HomeGraph> { inclusive = true }
-                }
-            }, navigateToProfile = {
-                navController.navigate(Screen.Profile)
-            },
+            HomeGraphScreen(
+                navigateToAuth = {
+                    navController.navigate(Screen.Auth) {
+                        /** Remove the home graph screen from the backstack */
+                        popUpTo<Screen.HomeGraph> { inclusive = true }
+                    }
+                }, navigateToProfile = {
+                    navController.navigate(Screen.Profile)
+                },
                 navigateToAdminPanel = {
                     navController.navigate(Screen.AdminPanel)
                 })
@@ -45,12 +48,22 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
         }
         composable<Screen.AdminPanel> {
             AdminPanelScreen(
+                navigateToManageProduct = { productId ->
+                    navController.navigate(Screen.ManageProduct(id = productId))
+                },
                 navigateBack = {
-                    /** pop our current screen from the back stack and navigate to the previous screen (HomeGraph) */
                     navController.navigateUp()
                 }
             )
         }
-
+        composable<Screen.ManageProduct> { navBackStackEntry ->
+            val productId = navBackStackEntry.toRoute<Screen.ManageProduct>().id
+            ManageProductScreen(
+                id = productId,
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
     }
 }

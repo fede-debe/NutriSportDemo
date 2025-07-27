@@ -20,53 +20,57 @@ import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminPanelScreen(navigateBack: () -> Unit) {
-    Scaffold(containerColor = Surface, topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    "Admin panel",
-                    fontFamily = bebasNeueFont(),
-                    fontSize = FontSize.LARGE,
-                    color = TextPrimary
+fun AdminPanelScreen(navigateToManageProduct: (String?) -> Unit, navigateBack: () -> Unit) {
+    Scaffold(
+        containerColor = Surface, topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Admin panel",
+                        fontFamily = bebasNeueFont(),
+                        fontSize = FontSize.LARGE,
+                        color = TextPrimary
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            painter = painterResource(Resources.Icon.BackArrow),
+                            contentDescription = "Back Arrow icon",
+                            tint = IconPrimary
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {}) {
+                        Icon(
+                            painter = painterResource(Resources.Icon.Search),
+                            contentDescription = "Back Arrow icon",
+                            tint = IconPrimary
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = Surface,
+                    scrolledContainerColor = Surface,
+                    navigationIconContentColor = IconPrimary,
+                    titleContentColor = TextPrimary,
+                    actionIconContentColor = IconPrimary
                 )
-            },
-            navigationIcon = {
-                IconButton(onClick = navigateBack) {
-                    Icon(
-                        painter = painterResource(Resources.Icon.BackArrow),
-                        contentDescription = "Back Arrow icon",
-                        tint = IconPrimary
-                    )
-                }
-            },
-            actions = {
-                IconButton(onClick = {}) {
-                    Icon(
-                        painter = painterResource(Resources.Icon.Search),
-                        contentDescription = "Back Arrow icon",
-                        tint = IconPrimary
-                    )
-                }
-            },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = Surface,
-                scrolledContainerColor = Surface,
-                navigationIconContentColor = IconPrimary,
-                titleContentColor = TextPrimary,
-                actionIconContentColor = IconPrimary
             )
-        )
-    },
+        },
         floatingActionButton = {
-            FloatingActionButton(onClick = {},
+            FloatingActionButton(
+                onClick = { navigateToManageProduct(null) },
                 containerColor = ButtonPrimary,
                 contentColor = IconPrimary,
                 content = {
-                    Icon(painter = painterResource(Resources.Icon.Plus),
-                        contentDescription = "Add icon")
+                    Icon(
+                        painter = painterResource(Resources.Icon.Plus),
+                        contentDescription = "Add icon"
+                    )
                 }
             )
         }
-      ) { paddingValues -> }
+    ) { paddingValues -> }
 }
