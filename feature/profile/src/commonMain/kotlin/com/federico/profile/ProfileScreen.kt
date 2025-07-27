@@ -21,9 +21,9 @@ import com.nutrisportdemo.shared.Resources
 import com.nutrisportdemo.shared.Surface
 import com.nutrisportdemo.shared.TextPrimary
 import com.nutrisportdemo.shared.bebasNeueFont
-import com.nutrisportdemo.shared.component.card.ErrorCard
 import com.nutrisportdemo.shared.component.PrimaryButton
 import com.nutrisportdemo.shared.component.ProfileForm
+import com.nutrisportdemo.shared.component.card.InfoCard
 import com.nutrisportdemo.shared.component.card.LoadingCard
 import com.nutrisportdemo.shared.util.DisplayResult
 import org.jetbrains.compose.resources.painterResource
@@ -124,8 +124,11 @@ fun ProfileScreen(
                         }
                     },
                     onError = { message ->
-                        ErrorCard(message = message, fontSize = FontSize.REGULAR)
-
+                        InfoCard(
+                            image = Resources.Image.Cat,
+                            title = "Oops",
+                            subtitle = message
+                        )
                     }
                 )
             }
