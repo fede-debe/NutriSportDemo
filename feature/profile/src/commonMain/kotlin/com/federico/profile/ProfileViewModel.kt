@@ -7,12 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.federico.data.domain.CustomerRepository
 import com.nutrisportdemo.shared.domain.Country
+import com.nutrisportdemo.shared.domain.Customer
 import com.nutrisportdemo.shared.domain.PhoneNumber
 import com.nutrisportdemo.shared.util.RequestState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 data class ProfileScreenState(
+    val id: String = "",
     val firstName: String = "",
     val lastName: String = "",
     val email: String = "",
@@ -32,6 +34,16 @@ class ProfileViewModel(
     var screenState: ProfileScreenState by mutableStateOf(ProfileScreenState())
         private set
 
+    val isFormValid: Boolean
+        get() = with(screenState) {
+            firstName.length in 3..50 &&
+                    lastName.length in 3..50 &&
+                    city?.length in 3..50 &&
+                    postalCode != null || postalCode?.toString()?.length in 3..8 &&
+                    address?.length in 3..50 &&
+                    phoneNumber?.number?.length in 5..30
+        }
+
     init {
         viewModelScope.launch {
             customerRepository.readCustomerFlow().collectLatest { data ->
@@ -40,6 +52,7 @@ class ProfileViewModel(
                         val fetchedCustomer = data.getSuccessData()
                         fetchedCustomer.apply {
                             screenState = ProfileScreenState(
+                                id = id,
                                 firstName = firstName,
                                 lastName = lastName,
                                 email = email,
@@ -85,7 +98,9 @@ class ProfileViewModel(
     }
 
     fun updateCountry(value: Country) {
-        screenState = screenState.copy(country = value)
+        screenState = screenState.copy(country = value, phoneNumber = screenState.phoneNumber?.copy(
+            dialCode = value.dialCode
+        ))
     }
 
     fun updatePhoneNumber(value: String) {
@@ -97,5 +112,26 @@ class ProfileViewModel(
                         number = value
                     )
                 )
+    }
+
+    fun updateCustomer(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            screenState.apply {
+                customerRepository.updateCustomer(
+                    customer = Customer(
+                        id = id,
+                        firstName = firstName,
+                        lastName = lastName,
+                        email = email,
+                        city = city,
+                        postalCode = postalCode,
+                        address = address,
+                        phoneNumber = phoneNumber
+                    ),
+                    onSuccess = onSuccess,
+                    onError = onError
+                )
+            }
+        }
     }
 }
