@@ -12,6 +12,12 @@ val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
 val Red = Color(0xFFDD0000)
 
+val CategoryYellow = Color(color = 0xFFFFC738)
+val CategoryBlue = Color(color = 0xFF38B3FF)
+val CategoryGreen = Color(color = 0xFF19D109)
+val CategoryPurple = Color(color = 0xFF85E5FF)
+val CategoryRed = Color(color = 0xFFFF5E60)
+
 val Surface = White
 val SurfaceLighter = GrayLighter
 val SurfaceDarker = Gray
