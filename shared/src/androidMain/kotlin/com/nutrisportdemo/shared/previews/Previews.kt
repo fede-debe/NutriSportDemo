@@ -21,11 +21,13 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.Resources
-import com.nutrisportdemo.shared.component.textField.AlertTextField
-import com.nutrisportdemo.shared.component.textField.CustomTextField
 import com.nutrisportdemo.shared.component.PrimaryButton
 import com.nutrisportdemo.shared.component.ProfileForm
+import com.nutrisportdemo.shared.component.card.ErrorCard
+import com.nutrisportdemo.shared.component.card.InfoCard
 import com.nutrisportdemo.shared.component.dialog.CountryPickerDialog
+import com.nutrisportdemo.shared.component.textField.AlertTextField
+import com.nutrisportdemo.shared.component.textField.CustomTextField
 import com.nutrisportdemo.shared.domain.Country
 import org.jetbrains.compose.resources.DrawableResource
 
@@ -235,5 +237,54 @@ fun CountryPickerDialogPreview(
 
 class CountryPickerDialogVariant : PreviewParameterProvider<Country> {
     override val values = sequenceOf(Country.Serbia, Country.Serbia, Country.India)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun InfoCardPreview(
+    @PreviewParameter(InfoCardVariant::class) image: DrawableResource
+) {
+    MaterialTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "InfoCard",
+                fontSize = FontSize.REGULAR,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            InfoCard(image = image, title = "InfoTitle", subtitle = "InfoSubtitle")
+        }
+    }
+}
+
+class InfoCardVariant : PreviewParameterProvider<DrawableResource> {
+    override val values = sequenceOf(Resources.Image.ShoppingCart, Resources.Image.Cat)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ErrorCardPreview(
+) {
+    MaterialTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "InfoCard",
+                fontSize = FontSize.REGULAR,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            ErrorCard(message = "Country not found")
+        }
+    }
 }
 
