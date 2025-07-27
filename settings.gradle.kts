@@ -31,6 +31,7 @@ include(":data")
 
 include(":di")
 include(":feature:admin_panel")
+include(":feature:admin_panel:manage_product")
 include(":composeApp")
 include(":feature:home")
 include(":feature:profile")
