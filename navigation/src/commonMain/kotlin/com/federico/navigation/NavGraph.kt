@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.federico.admin_panel.AdminPanelScreen
 import com.federico.auth.AuthScreen
 import com.federico.home.HomeGraphScreen
 import com.federico.profile.ProfileScreen
@@ -29,7 +30,10 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
                 }
             }, navigateToProfile = {
                 navController.navigate(Screen.Profile)
-            })
+            },
+                navigateToAdminPanel = {
+                    navController.navigate(Screen.AdminPanel)
+                })
         }
         composable<Screen.Profile> {
             ProfileScreen(
@@ -39,5 +43,14 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
                 }
             )
         }
+        composable<Screen.AdminPanel> {
+            AdminPanelScreen(
+                navigateBack = {
+                    /** pop our current screen from the back stack and navigate to the previous screen (HomeGraph) */
+                    navController.navigateUp()
+                }
+            )
+        }
+
     }
 }

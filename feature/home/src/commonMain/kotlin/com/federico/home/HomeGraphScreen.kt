@@ -68,7 +68,8 @@ import rememberMessageBarState
 @Composable
 fun HomeGraphScreen(
     navigateToAuth: () -> Unit,
-    navigateToProfile: () -> Unit
+    navigateToProfile: () -> Unit,
+    navigateToAdminPanel: () -> Unit,
 ) {
     val viewModel = koinViewModel<HomeGraphViewModel>()
     val messageBarState = rememberMessageBarState()
@@ -124,7 +125,7 @@ fun HomeGraphScreen(
                     }
                 )
             },
-            onAdminPanelClick = {}
+            onAdminPanelClick = navigateToAdminPanel
         )
         /** we need extra box to provide modifier values to scale down the scaffold */
         Box(
