@@ -15,9 +15,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import com.nutrisportdemo.shared.BorderIdle
 import com.nutrisportdemo.shared.FontSize
+import com.nutrisportdemo.shared.IconPrimary
 import com.nutrisportdemo.shared.SurfaceLighter
 import com.nutrisportdemo.shared.TextPrimary
 import org.jetbrains.compose.resources.DrawableResource
@@ -41,7 +43,8 @@ fun AlertTextField(
             Image(
                 modifier = Modifier.size(14.dp),
                 painter = painterResource(icon),
-                contentDescription = "Text field icon"
+                contentDescription = "Text field icon",
+                colorFilter = ColorFilter.tint(IconPrimary)
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
