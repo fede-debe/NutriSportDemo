@@ -1,6 +1,7 @@
 package com.federico.manage_product
 
 import ContentWithMessageBar
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,6 +27,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,8 +45,10 @@ import com.nutrisportdemo.shared.SurfaceLighter
 import com.nutrisportdemo.shared.TextPrimary
 import com.nutrisportdemo.shared.bebasNeueFont
 import com.nutrisportdemo.shared.component.PrimaryButton
+import com.nutrisportdemo.shared.component.dialog.CategoriesDialog
 import com.nutrisportdemo.shared.component.textField.AlertTextField
 import com.nutrisportdemo.shared.component.textField.CustomTextField
+import com.nutrisportdemo.shared.domain.ProductCategory
 import org.jetbrains.compose.resources.painterResource
 import rememberMessageBarState
 
@@ -50,6 +57,8 @@ import rememberMessageBarState
 fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
 
     val messageBarState = rememberMessageBarState()
+    var showCategoriesDialog by remember { mutableStateOf(false) }
+    var category by remember { mutableStateOf(ProductCategory.Protein) }
 
     val topBarTitle = when {
         id == null -> "New Product"
@@ -57,6 +66,17 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
     }
     val buttonTitle = if (id == null) "Add new product" else "Update"
     val buttonIcon = if (id == null) Resources.Icon.Plus else Resources.Icon.Check
+
+    AnimatedVisibility(visible = showCategoriesDialog) {
+        CategoriesDialog(
+            category = category,
+            onDismiss = { showCategoriesDialog = false },
+            onConfirmClick = { selectedCategory ->
+                category = selectedCategory
+                showCategoriesDialog = false
+            }
+        )
+    }
 
     Scaffold(containerColor = Surface, topBar = {
         TopAppBar(
@@ -144,8 +164,8 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
 
                     AlertTextField(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "Protein",
-                        onClick = {}
+                        text = category.title,
+                        onClick = { showCategoriesDialog = true }
                     )
 
                     CustomTextField(
