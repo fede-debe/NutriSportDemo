@@ -25,10 +25,12 @@ import com.nutrisportdemo.shared.component.PrimaryButton
 import com.nutrisportdemo.shared.component.ProfileForm
 import com.nutrisportdemo.shared.component.card.ErrorCard
 import com.nutrisportdemo.shared.component.card.InfoCard
+import com.nutrisportdemo.shared.component.dialog.CategoriesDialog
 import com.nutrisportdemo.shared.component.dialog.CountryPickerDialog
 import com.nutrisportdemo.shared.component.textField.AlertTextField
 import com.nutrisportdemo.shared.component.textField.CustomTextField
 import com.nutrisportdemo.shared.domain.Country
+import com.nutrisportdemo.shared.domain.ProductCategory
 import org.jetbrains.compose.resources.DrawableResource
 
 @Preview(showBackground = true)
@@ -241,6 +243,43 @@ class CountryPickerDialogVariant : PreviewParameterProvider<Country> {
 
 @Preview(showBackground = true)
 @Composable
+fun CategoriesDialogPreview(
+    @PreviewParameter(CategoriesDialogVariant::class) category: ProductCategory
+) {
+    MaterialTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = "CategoriesDialog",
+                fontSize = FontSize.REGULAR,
+                fontWeight = FontWeight.SemiBold
+            )
+
+            CategoriesDialog(
+                category = category,
+                onDismiss = {},
+                onConfirmClick = {}
+            )
+        }
+    }
+}
+
+class CategoriesDialogVariant : PreviewParameterProvider<ProductCategory> {
+    override val values = sequenceOf(
+        ProductCategory.Protein,
+        ProductCategory.Creatine,
+        ProductCategory.PreWorkout,
+        ProductCategory.Gainers,
+        ProductCategory.Accessories
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
 fun InfoCardPreview(
     @PreviewParameter(InfoCardVariant::class) image: DrawableResource
 ) {
@@ -269,6 +308,8 @@ class InfoCardVariant : PreviewParameterProvider<DrawableResource> {
 @Preview(showBackground = true)
 @Composable
 fun ErrorCardPreview(
+    @PreviewParameter(ErrorCardVariant::class) message: String
+
 ) {
     MaterialTheme {
         Column(
@@ -283,8 +324,12 @@ fun ErrorCardPreview(
                 fontWeight = FontWeight.SemiBold
             )
 
-            ErrorCard(message = "Country not found")
+            ErrorCard(message = message)
         }
     }
+}
+
+class ErrorCardVariant : PreviewParameterProvider<String> {
+    override val values = sequenceOf("Country not found", "Category not found")
 }
 
