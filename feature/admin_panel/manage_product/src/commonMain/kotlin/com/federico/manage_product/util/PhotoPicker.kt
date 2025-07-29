@@ -10,8 +10,9 @@ import dev.gitlive.firebase.storage.File
  *
  *  open() is used to trigger the photo picker.
  * */
+@Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 expect class PhotoPicker {
+    fun open()
     @Composable
     fun InitializePhotoPicker(onImageSelected: (File?) -> Unit)
-    fun open()
 }
