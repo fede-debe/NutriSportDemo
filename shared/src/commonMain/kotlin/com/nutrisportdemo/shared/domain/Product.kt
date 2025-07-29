@@ -6,7 +6,9 @@ import com.nutrisportdemo.shared.CategoryGreen
 import com.nutrisportdemo.shared.CategoryPurple
 import com.nutrisportdemo.shared.CategoryRed
 import com.nutrisportdemo.shared.CategoryYellow
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Product(
     val id: String,
     val title: String,
@@ -16,6 +18,7 @@ data class Product(
     val flavors: List<String>? = null,
     val weight: Int? = null,
     val price: Double,
+    /** These 3 parameter below can be manually set from the firestore database */
     val isPopular: Boolean = false,
     val isDiscounted: Boolean = false,
     val isNew: Boolean = false
