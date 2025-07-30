@@ -39,6 +39,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
             implementation(libs.firebase.firestore)
+            implementation(libs.firebase.storage)
             implementation(libs.kmpauth.firebase)
 
             implementation(project(path = ":shared"))
