@@ -11,7 +11,7 @@ import kotlinx.coroutines.withTimeout
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class AdminRepositoryImpl: AdminRepository {
+class AdminRepositoryImpl : AdminRepository {
     override fun getCurrentUserId(): String? = Firebase.auth.currentUser?.uid
 
     override suspend fun createNewProduct(
@@ -52,5 +52,48 @@ class AdminRepositoryImpl: AdminRepository {
                 null
             }
         } else null
+    }
+
+    override suspend fun deleteImageFromStorage(
+        downloadUrl: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        try {
+            val storagePath = extractFirebaseStoragePath(downloadUrl)
+            when (storagePath) {
+                null -> onError("Storage path is null")
+                else -> {
+                    Firebase.storage.reference(storagePath).delete()
+                    onSuccess()
+                }
+            }
+        } catch (e: Exception) {
+            onError("Error while deleting a thumbnail: $e")
+        }
+    }
+
+    /** two functions will be helper functions to allow us to extract the actual
+     *  image path from the download URL.
+     */
+    private fun extractFirebaseStoragePath(downloadUrl: String): String? {
+        // startIndex should start after last char of the provided string
+        val startIndex = downloadUrl.indexOf("/o/") + 3
+        if (startIndex < 3) return null
+
+        val endIndex = downloadUrl.indexOf("?", startIndex)
+        val encodedPath = if (endIndex != -1) {
+            downloadUrl.substring(startIndex, endIndex)
+        } else {
+            downloadUrl.substring(startIndex)
+        }
+
+        return decodeFirebaseStoragePath(encodedPath = encodedPath)
+    }
+
+    private fun decodeFirebaseStoragePath(encodedPath: String): String {
+        return encodedPath
+            .replace("%2F", "/")
+            .replace("%20", " ")
     }
 }
