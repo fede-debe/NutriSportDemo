@@ -208,14 +208,13 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                             viewModel.updateThumbnailUploaderState(RequestState.Idle)
                                         },
                                         colors = ButtonDefaults.textButtonColors(
-                                            containerColor = Color.Transparent,
-                                            contentColor = TextSecondary
+                                            containerColor = Color.Transparent
                                         )
                                     ) {
                                         Text(
                                             text = "Try again",
                                             fontSize = FontSize.SMALL,
-                                            color = TextPrimary
+                                            color = TextSecondary
                                         )
                                     }
                                 }
