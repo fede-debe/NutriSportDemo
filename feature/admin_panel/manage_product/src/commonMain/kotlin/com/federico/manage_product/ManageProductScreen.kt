@@ -19,11 +19,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -34,8 +36,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import com.federico.manage_product.util.PhotoPicker
 import com.nutrisportdemo.shared.BorderIdle
 import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.IconPrimary
@@ -43,24 +52,41 @@ import com.nutrisportdemo.shared.Resources
 import com.nutrisportdemo.shared.Surface
 import com.nutrisportdemo.shared.SurfaceLighter
 import com.nutrisportdemo.shared.TextPrimary
+import com.nutrisportdemo.shared.TextSecondary
 import com.nutrisportdemo.shared.bebasNeueFont
 import com.nutrisportdemo.shared.component.PrimaryButton
+import com.nutrisportdemo.shared.component.card.ErrorCard
+import com.nutrisportdemo.shared.component.card.LoadingCard
 import com.nutrisportdemo.shared.component.dialog.CategoriesDialog
 import com.nutrisportdemo.shared.component.textField.AlertTextField
 import com.nutrisportdemo.shared.component.textField.CustomTextField
+import com.nutrisportdemo.shared.util.DisplayResult
+import com.nutrisportdemo.shared.util.RequestState
 import org.jetbrains.compose.resources.painterResource
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import rememberMessageBarState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
-
     val messageBarState = rememberMessageBarState()
     val viewModel = koinViewModel<ManageProductViewModel>()
     val screenState = viewModel.screenState
     val isFormValid = viewModel.isFormValid
+    val thumbnailUploaderState = viewModel.thumbnailUploaderState
     var showCategoriesDialog by remember { mutableStateOf(false) }
+
+    val photoPicker = koinInject<PhotoPicker>()
+
+    photoPicker.InitializePhotoPicker(
+        onImageSelected = { file ->
+            viewModel.uploadThumbnailToStorage(
+                file = file,
+                onSuccess = { messageBarState.addSuccess("Thumbnail uploaded successfully!") }
+            )
+        }
+    )
 
     val topBarTitle = when {
         id == null -> "New Product"
@@ -138,14 +164,62 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                 shape = RoundedCornerShape(size = 12.dp)
                             )
                             .background(SurfaceLighter)
-                            .clickable { },
+                            .clickable(enabled = thumbnailUploaderState.isIdle()) {
+                                photoPicker.open()
+                            },
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            modifier = Modifier.size(24.dp),
-                            painter = painterResource(Resources.Icon.Plus),
-                            contentDescription = "Plus icon",
-                            tint = IconPrimary
+                        thumbnailUploaderState.DisplayResult(
+                            onIdle = {
+                                Icon(
+                                    modifier = Modifier.size(24.dp),
+                                    painter = painterResource(Resources.Icon.Plus),
+                                    contentDescription = "Plus icon",
+                                    tint = IconPrimary
+                                )
+                            },
+                            onLoading = {
+                                LoadingCard(modifier = Modifier.fillMaxSize())
+                            },
+                            onSuccess = {
+                                AsyncImage(
+                                    modifier = Modifier.fillMaxSize(),
+                                    model = ImageRequest.Builder(
+                                        LocalPlatformContext.current
+                                    ).data(screenState.thumbnail)
+                                        .crossfade(enable = true)
+                                        .build(),
+                                    contentDescription = "Product thumbnail image",
+                                    contentScale = ContentScale.Crop
+                                )
+                            },
+                            onError = { message ->
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    ErrorCard(
+                                        message = message
+                                    )
+                                    Spacer(modifier = Modifier.height(12.dp))
+                                    TextButton(
+                                        onClick = {
+                                            viewModel.updateThumbnailUploaderState(RequestState.Idle)
+                                        },
+                                        colors = ButtonDefaults.textButtonColors(
+                                            containerColor = Color.Transparent,
+                                            contentColor = TextSecondary
+                                        )
+                                    ) {
+                                        Text(
+                                            text = "Try again",
+                                            fontSize = FontSize.SMALL,
+                                            color = TextPrimary
+                                        )
+                                    }
+                                }
+                            }
                         )
                     }
 
@@ -205,8 +279,8 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                     icon = buttonIcon,
                     onClick = {
                         viewModel.createNewProduct(
-                            onSuccessful = { messageBarState.addSuccess("Product Successfully added!")},
-                            onError = { message -> messageBarState.addError(message)}
+                            onSuccessful = { messageBarState.addSuccess("Product Successfully added!") },
+                            onError = { message -> messageBarState.addError(message) }
                         )
                     })
             }
