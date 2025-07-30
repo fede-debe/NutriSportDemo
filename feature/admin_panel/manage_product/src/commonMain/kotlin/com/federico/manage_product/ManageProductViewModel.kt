@@ -31,7 +31,7 @@ class ManageProductViewModel(
     var screenState by mutableStateOf(ManageProductState())
         private set
 
-    var thumbnailUploaderState : RequestState<Unit> by mutableStateOf(RequestState.Idle)
+    var thumbnailUploaderState: RequestState<Unit> by mutableStateOf(RequestState.Idle)
     val isFormValid: Boolean
         get() = screenState.title.isNotEmpty() &&
                 screenState.description.isNotEmpty() &&
@@ -117,6 +117,20 @@ class ManageProductViewModel(
             } catch (e: Exception) {
                 updateThumbnailUploaderState(RequestState.Error("Error while uploading: $e"))
             }
+        }
+    }
+
+    fun deleteThumbnailFromStorage(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            adminRepository.deleteImageFromStorage(
+                downloadUrl = screenState.thumbnail,
+                onSuccess = {
+                    updateThumbnail(value = "")
+                    updateThumbnailUploaderState(RequestState.Idle)
+                    onSuccess()
+                },
+                onError = onError
+            )
         }
     }
 }
