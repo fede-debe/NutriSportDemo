@@ -10,6 +10,7 @@ import com.federico.manage_product.ManageProductViewModel
 import com.federico.profile.ProfileViewModel
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -27,12 +28,19 @@ val sharedModule = module {
     viewModelOf(::ManageProductViewModel)
 }
 
+/** the reason why I'm using a targetModule is because that I need to provide
+ * the actual photo picker dependency separately for Android and iOS, because we have used
+ * the actual and expected mechanism to define that photo picker functionality
+ * separately for Android and iOS.
+ * */
+expect val targetModule: Module
+
 /** We will pass the Android context as config parameter*/
 fun initializeKoin(
     config: (KoinApplication.() -> Unit)? = null
 ) {
     startKoin {
         config?.invoke(this)
-        modules(sharedModule)
+        modules(sharedModule, targetModule)
     }
 }
