@@ -46,6 +46,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.federico.manage_product.util.PhotoPicker
 import com.nutrisportdemo.shared.BorderIdle
+import com.nutrisportdemo.shared.ButtonPrimary
 import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.IconPrimary
 import com.nutrisportdemo.shared.Resources
@@ -182,16 +183,46 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                 LoadingCard(modifier = Modifier.fillMaxSize())
                             },
                             onSuccess = {
-                                AsyncImage(
-                                    modifier = Modifier.fillMaxSize(),
-                                    model = ImageRequest.Builder(
-                                        LocalPlatformContext.current
-                                    ).data(screenState.thumbnail)
-                                        .crossfade(enable = true)
-                                        .build(),
-                                    contentDescription = "Product thumbnail image",
-                                    contentScale = ContentScale.Crop
-                                )
+                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
+                                    AsyncImage(
+                                        modifier = Modifier.fillMaxSize(),
+                                        model = ImageRequest.Builder(
+                                            LocalPlatformContext.current
+                                        ).data(screenState.thumbnail)
+                                            .crossfade(enable = true)
+                                            .build(),
+                                        contentDescription = "Product thumbnail image",
+                                        contentScale = ContentScale.Crop
+                                    )
+
+                                    Box(
+                                        modifier = Modifier
+                                            .clip(RoundedCornerShape(size = 6.dp))
+                                            .padding(
+                                                top = 12.dp,
+                                                end = 12.dp
+                                            )
+                                            .background(ButtonPrimary)
+                                            .clickable {
+                                                viewModel.deleteThumbnailFromStorage(
+                                                    onSuccess = {
+                                                        messageBarState.addSuccess("Thumbnail removed successfully.")
+                                                    },
+                                                    onError = { message ->
+                                                        messageBarState.addError(message)
+                                                    }
+                                                )
+                                            }
+                                            .padding(all = 12.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            modifier = Modifier.size(14.dp),
+                                            painter = painterResource(Resources.Icon.Delete),
+                                            contentDescription = "Delete icon"
+                                        )
+                                    }
+                                }
                             },
                             onError = { message ->
                                 Column(
