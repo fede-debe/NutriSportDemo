@@ -30,6 +30,7 @@ import nutrisportdemo.shared.generated.resources.unlock
 import nutrisportdemo.shared.generated.resources.usa
 import nutrisportdemo.shared.generated.resources.user
 import nutrisportdemo.shared.generated.resources.vertical_menu
+import nutrisportdemo.shared.generated.resources.weight
 
 /** Share various different resources across the project. */
 object Resources {
@@ -55,6 +56,7 @@ object Resources {
         val Book = Res.drawable.book
         val VerticalMenu = Res.drawable.vertical_menu
         val Delete = Res.drawable.delete
+        val Weight = Res.drawable.weight
     }
 
     object Image {

@@ -7,10 +7,14 @@ import com.nutrisportdemo.shared.CategoryPurple
 import com.nutrisportdemo.shared.CategoryRed
 import com.nutrisportdemo.shared.CategoryYellow
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Serializable
-data class Product(
+data class Product @OptIn(ExperimentalTime::class) constructor(
     val id: String,
+    /** We need createdAt to be able to fetch the latest 10 items from the database */
+    val createdAt: Long = Clock.System.now().toEpochMilliseconds(),
     val title: String,
     val description: String,
     val thumbnail: String,
