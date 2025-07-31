@@ -3,6 +3,7 @@ package com.federico.manage_product
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.federico.data.domain.AdminRepository
@@ -27,7 +28,10 @@ data class ManageProductState @OptIn(ExperimentalUuidApi::class) constructor(
 
 class ManageProductViewModel(
     private val adminRepository: AdminRepository,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    private val productId = savedStateHandle.get<String>("productId") ?: ""
     var screenState by mutableStateOf(ManageProductState())
         private set
 
@@ -38,6 +42,25 @@ class ManageProductViewModel(
                 screenState.thumbnail.isNotEmpty() &&
                 screenState.price != 0.0
 
+    init {
+        viewModelScope.launch {
+            productId.takeIf { it.isNotEmpty() }?.let { productId ->
+                val selectedProduct = adminRepository.readProductById(productId)
+                if (selectedProduct.isSuccess()) {
+                    val product = selectedProduct.getSuccessData()
+
+                    updateTitle(product.title)
+                    updateDescription(product.description)
+                    updateThumbnail(product.thumbnail)
+                    updateThumbnailUploaderState(RequestState.Success(Unit))
+                    updateCategory(ProductCategory.valueOf(product.category))
+                    updateFlavors(product.flavors?.joinToString(",") ?: "")
+                    updateWeight(product.weight)
+                    updatePrice(product.price)
+                }
+            }
+        }
+    }
 
     fun updateTitle(value: String) {
         screenState = screenState.copy(title = value)
