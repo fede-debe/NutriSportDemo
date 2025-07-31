@@ -31,6 +31,11 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.androidx.compose.ui.tooling)
+            implementation(libs.ktor.client.android)
+            implementation(libs.androidx.activity.compose)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -43,6 +48,12 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
             implementation(libs.kotlinx.serialization.json)
+
+            implementation(libs.coil3)
+            implementation(libs.coil3.compose)
+            implementation(libs.coil3.compose.core)
+            /** because of this dependency we need to declare the ktor dependencies for each target (ios, android) */
+            implementation(libs.coil3.network.ktor3)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
