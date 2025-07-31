@@ -49,7 +49,7 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
         composable<Screen.AdminPanel> {
             AdminPanelScreen(
                 navigateToManageProduct = { productId ->
-                    navController.navigate(Screen.ManageProduct(id = productId))
+                    navController.navigate(Screen.ManageProduct(productId = productId))
                 },
                 navigateBack = {
                     navController.navigateUp()
@@ -57,7 +57,7 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
             )
         }
         composable<Screen.ManageProduct> { navBackStackEntry ->
-            val productId = navBackStackEntry.toRoute<Screen.ManageProduct>().id
+            val productId = navBackStackEntry.toRoute<Screen.ManageProduct>().productId
             ManageProductScreen(
                 id = productId,
                 navigateBack = {
