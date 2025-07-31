@@ -116,9 +116,7 @@ fun AdminPanelScreen(navigateToManageProduct: (String?) -> Unit, navigateBack: (
                     ) { product ->
                         ProductCard(
                             product = product,
-                            onClick = {
-                                // Handle click (e.g., navigate to product detail)
-                            }
+                            onClick = { navigateToManageProduct(product.id) }
                         )
                     }
                 }
