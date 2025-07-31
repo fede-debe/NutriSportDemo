@@ -61,6 +61,7 @@ import com.nutrisportdemo.shared.component.card.LoadingCard
 import com.nutrisportdemo.shared.component.dialog.CategoriesDialog
 import com.nutrisportdemo.shared.component.textField.AlertTextField
 import com.nutrisportdemo.shared.component.textField.CustomTextField
+import com.nutrisportdemo.shared.domain.ProductCategory
 import com.nutrisportdemo.shared.util.DisplayResult
 import com.nutrisportdemo.shared.util.RequestState
 import org.jetbrains.compose.resources.painterResource
@@ -183,7 +184,10 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                 LoadingCard(modifier = Modifier.fillMaxSize())
                             },
                             onSuccess = {
-                                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.TopEnd
+                                ) {
                                     AsyncImage(
                                         modifier = Modifier.fillMaxSize(),
                                         model = ImageRequest.Builder(
@@ -273,20 +277,24 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                         onClick = { showCategoriesDialog = true }
                     )
 
-                    CustomTextField(
-                        value = "${screenState.weight ?: ""}",
-                        onValueChange = { viewModel.updateWeight(it.toIntOrNull() ?: 0) },
-                        placeholder = "Weight (Optional)",
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
-                        )
-                    )
+                    AnimatedVisibility(visible = screenState.category != ProductCategory.Accessories) {
+                        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            CustomTextField(
+                                value = "${screenState.weight ?: ""}",
+                                onValueChange = { viewModel.updateWeight(it.toIntOrNull() ?: 0) },
+                                placeholder = "Weight",
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                )
+                            )
 
-                    CustomTextField(
-                        value = screenState.flavors,
-                        onValueChange = viewModel::updateFlavors,
-                        placeholder = "Flavors (Optional)"
-                    )
+                            CustomTextField(
+                                value = screenState.flavors,
+                                onValueChange = viewModel::updateFlavors,
+                                placeholder = "Flavors"
+                            )
+                        }
+                    }
 
                     CustomTextField(
                         value = "${screenState.price}",
