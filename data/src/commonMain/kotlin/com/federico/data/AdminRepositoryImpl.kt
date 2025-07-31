@@ -2,11 +2,16 @@ package com.federico.data
 
 import com.federico.data.domain.AdminRepository
 import com.nutrisportdemo.shared.domain.Product
+import com.nutrisportdemo.shared.util.RequestState
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
+import dev.gitlive.firebase.firestore.Direction
 import dev.gitlive.firebase.firestore.firestore
 import dev.gitlive.firebase.storage.File
 import dev.gitlive.firebase.storage.storage
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withTimeout
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -70,6 +75,42 @@ class AdminRepositoryImpl : AdminRepository {
             }
         } catch (e: Exception) {
             onError("Error while deleting a thumbnail: $e")
+        }
+    }
+
+    override fun readLastTenProducts(): Flow<RequestState<List<Product>>> = channelFlow {
+        try {
+            val userId = getCurrentUserId()
+            if (userId != null) {
+                val database = Firebase.firestore
+                database.collection("product")
+                    .orderBy("createdAt", Direction.DESCENDING)
+                    .limit(10)
+                    .snapshots
+                    .collectLatest { query ->
+                        val products = query.documents.map { document ->
+                            Product(
+                                id = document.id,
+                                title = document.get("title"),
+                                createdAt = document.get("createdAt"),
+                                description = document.get("description"),
+                                thumbnail = document.get("thumbnail"),
+                                category = document.get("category"),
+                                flavors = document.get("flavors"),
+                                weight = document.get("weight"),
+                                price = document.get("price"),
+                                isPopular = document.get("isPopular"),
+                                isDiscounted = document.get("isDiscounted"),
+                                isNew = document.get("isNew")
+                            )
+                        }
+                        send(RequestState.Success(products))
+                    }
+            } else {
+                send(RequestState.Error("User is not available."))
+            }
+        } catch (e: Exception) {
+            send(RequestState.Error("Error while reading the last 10 items from the database: ${e.message}"))
         }
     }
 

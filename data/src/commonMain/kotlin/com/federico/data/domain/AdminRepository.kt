@@ -1,7 +1,9 @@
 package com.federico.data.domain
 
 import com.nutrisportdemo.shared.domain.Product
+import com.nutrisportdemo.shared.util.RequestState
 import dev.gitlive.firebase.storage.File
+import kotlinx.coroutines.flow.Flow
 
 interface AdminRepository {
     fun getCurrentUserId(): String?
@@ -17,4 +19,5 @@ interface AdminRepository {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     )
+    fun readLastTenProducts(): Flow<RequestState<List<Product>>>
 }
