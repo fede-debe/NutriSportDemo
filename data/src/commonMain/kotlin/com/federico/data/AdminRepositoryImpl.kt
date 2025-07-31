@@ -114,6 +114,42 @@ class AdminRepositoryImpl : AdminRepository {
         }
     }
 
+    // get single doc from firebase collection
+    override suspend fun readProductById(productId: String): RequestState<Product> {
+        return try {
+            val userId = getCurrentUserId()
+            if (userId != null) {
+                val database = Firebase.firestore
+                val productDocument = database.collection("product")
+                    .document(productId)
+                    .get()
+                if (productDocument.exists) {
+                    val product = Product(
+                            id = productDocument.id,
+                            title = productDocument.get("title"),
+                            createdAt = productDocument.get("createdAt"),
+                            description = productDocument.get("description"),
+                            thumbnail = productDocument.get("thumbnail"),
+                            category = productDocument.get("category"),
+                            flavors = productDocument.get("flavors"),
+                            weight = productDocument.get("weight"),
+                            price = productDocument.get("price"),
+                            isPopular = productDocument.get("isPopular"),
+                            isDiscounted = productDocument.get("isDiscounted"),
+                            isNew = productDocument.get("isNew")
+                        )
+                    RequestState.Success(product)
+                } else {
+                    RequestState.Error("Selected product not found.")
+                }
+            } else {
+                RequestState.Error("User is not available.")
+            }
+        } catch (e: Exception) {
+            RequestState.Error("Error while reading a selected product: ${e.message}")
+        }
+    }
+
     /** two functions will be helper functions to allow us to extract the actual
      *  image path from the download URL.
      */
