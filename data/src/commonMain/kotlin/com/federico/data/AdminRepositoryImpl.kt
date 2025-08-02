@@ -30,7 +30,9 @@ class AdminRepositoryImpl : AdminRepository {
             if (currentUserId != null) {
                 val firestore = Firebase.firestore
                 val productCollection = firestore.collection("product")
-                productCollection.document(product.id).set(product)
+                // easier to query with lowercase
+                productCollection.document(product.id)
+                    .set(product.copy(title = product.title.lowercase()))
                 onSuccess()
             } else {
                 onError("User is not available.")
@@ -110,7 +112,8 @@ class AdminRepositoryImpl : AdminRepository {
                     .document(productId)
                     .get()
                 if (productDocument.exists) {
-                    RequestState.Success(productDocument.toProduct())
+                    val product = productDocument.toProduct()
+                    RequestState.Success(product.copy(title = product.title.uppercase()))
                 } else {
                     RequestState.Error("Selected product not found.")
                 }
@@ -146,7 +149,7 @@ class AdminRepositoryImpl : AdminRepository {
             .replace("%20", " ")
     }
 
-    override suspend fun updateImageThumbnail(
+    override suspend fun updateProductThumbnail(
         productId: String,
         downloadUrl: String,
         onSuccess: () -> Unit,
@@ -192,7 +195,7 @@ class AdminRepositoryImpl : AdminRepository {
 
                 if (existingProduct.exists) {
                     productCollection.document(product.id)
-                        .update(product)
+                        .update(product.copy(title = product.title.lowercase()))
                     onSuccess()
                 } else {
                     onError("Selected Product not found.")
@@ -233,4 +236,34 @@ class AdminRepositoryImpl : AdminRepository {
             onError("Error while updating a product: ${e.message}")
         }
     }
+
+    override fun searchProductByTitle(searchQuery: String): Flow<RequestState<List<Product>>> =
+        channelFlow {
+            try {
+                val userId = getCurrentUserId()
+                if (userId != null) {
+//                    val queryText = searchQuery.trim().lowercase()
+//                    // special code used to simulate a start with, it used to text searching within firebase
+//                    val endText = queryText + "\uf8ff"
+
+                    val database = Firebase.firestore
+                    database.collection("product")
+//                        .orderBy("title")
+//                        .startAt(queryText)
+//                        .endAt(endText)
+                        .snapshots
+                        .collectLatest { query ->
+                            val products = query.documents.map { document -> document.toProduct() }
+                            send(RequestState.Success(data = products
+                                .filter { it.title.contains(searchQuery, ignoreCase = true) }
+                                .map { it.copy(title = it.title.uppercase()) }))
+                        }
+                } else {
+                    send(RequestState.Error("User is not available."))
+                }
+
+            } catch (e: Exception) {
+                send(RequestState.Error("Error while searching a product: ${e.message}"))
+            }
+        }
 }
