@@ -200,4 +200,24 @@ class ManageProductViewModel(
             )
         }
     }
+    /**
+     * We trigger onSuccess when deleting the product because is more important
+     * to delete the product that the thumbnail from the database */
+    fun deleteProduct(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        productId.takeIf { it.isNotEmpty() }?.let { id ->
+            viewModelScope.launch {
+                adminRepository.deleteProduct(
+                    productId = id,
+                    onSuccess = {
+                        deleteThumbnailFromStorage(
+                            onSuccess = {},
+                            onError = {}
+                        )
+                        onSuccess()
+                    },
+                    onError = { message -> onError(message) }
+                )
+            }
+        }
+    }
 }
