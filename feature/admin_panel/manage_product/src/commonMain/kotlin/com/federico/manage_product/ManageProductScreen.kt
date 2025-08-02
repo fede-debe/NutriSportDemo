@@ -316,8 +316,9 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                     enabled = isFormValid,
                     icon = buttonIcon,
                     onClick = {
-                        viewModel.createNewProduct(
-                            onSuccessful = { messageBarState.addSuccess("Product Successfully added!") },
+                        viewModel.submitProduct(
+                            isUpdatingProduct = id != null,
+                            onSuccess = { messageBarState.addSuccess("Product Successfully added!") },
                             onError = { message -> messageBarState.addError(message) }
                         )
                     })

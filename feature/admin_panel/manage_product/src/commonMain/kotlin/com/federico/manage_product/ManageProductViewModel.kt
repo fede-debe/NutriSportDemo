@@ -102,13 +102,12 @@ class ManageProductViewModel(
         screenState = screenState.copy(price = value)
     }
 
-    fun submitProduct(isUpdate: Boolean, onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun submitProduct(isUpdatingProduct: Boolean, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             screenState.apply {
-                val flavors = if (isUpdate)
-                    flavors.splitAndTrim()
-                else
-                    flavors.split(",")
+                val flavors = if (isUpdatingProduct) flavors.splitAndTrim()
+                else flavors.split(",")
+
                 val product = Product(
                     id = id,
                     title = title,
@@ -120,7 +119,7 @@ class ManageProductViewModel(
                     price = price
                 )
 
-                if (isUpdate) {
+                if (isUpdatingProduct) {
                     adminRepository.updateProduct(product, onSuccess, onError)
                 } else {
                     adminRepository.createNewProduct(product, onSuccess, onError)
