@@ -90,7 +90,7 @@ class AdminRepositoryImpl : AdminRepository {
                     .snapshots
                     .collectLatest { query ->
                         val products = query.documents.map { document -> document.toProduct() }
-                        send(RequestState.Success(products))
+                        send(RequestState.Success(data = products.map { it.copy(title = it.title.uppercase()) }))
                     }
             } else {
                 send(RequestState.Error("User is not available."))

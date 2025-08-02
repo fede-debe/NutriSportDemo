@@ -7,20 +7,25 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.federico.data.domain.AdminRepository
-import com.nutrisportdemo.shared.domain.Product
+import com.federico.manage_product.util.toProduct
 import com.nutrisportdemo.shared.domain.ProductCategory
 import com.nutrisportdemo.shared.util.RequestState
-import com.nutrisportdemo.shared.util.splitAndTrim
 import dev.gitlive.firebase.storage.File
 import kotlinx.coroutines.launch
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-data class ManageProductState @OptIn(ExperimentalUuidApi::class) constructor(
+data class ManageProductState @OptIn(
+    ExperimentalUuidApi::class,
+    ExperimentalTime::class
+) constructor(
     val id: String = Uuid.random().toHexString(),
+    val createdAt: Long = Clock.System.now().toEpochMilliseconds(),
     val title: String = "",
     val description: String = "",
-    val thumbnail: String = "",
+    val thumbnail: String = "thumbnail image",
     val category: ProductCategory = ProductCategory.Protein,
     val flavors: String = "",
     val weight: Int? = null,
@@ -37,6 +42,7 @@ class ManageProductViewModel(
         private set
 
     var thumbnailUploaderState: RequestState<Unit> by mutableStateOf(RequestState.Idle)
+        private set
     val isFormValid: Boolean
         get() = screenState.title.isNotEmpty() &&
                 screenState.description.isNotEmpty() &&
@@ -52,6 +58,7 @@ class ManageProductViewModel(
 
                     product.apply {
                         updateId(id)
+                        updateCreatedAt(createdAt)
                         updateTitle(title)
                         updateDescription(description)
                         updateThumbnail(thumbnail)
@@ -68,6 +75,10 @@ class ManageProductViewModel(
 
     fun updateId(value: String) {
         screenState = screenState.copy(id = value)
+    }
+
+    fun updateCreatedAt(value: Long) {
+        screenState = screenState.copy(createdAt = value)
     }
 
     fun updateTitle(value: String) {
@@ -102,28 +113,18 @@ class ManageProductViewModel(
         screenState = screenState.copy(price = value)
     }
 
-    fun submitProduct(isUpdatingProduct: Boolean, onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun submitProduct(
+        isUpdatingProduct: Boolean,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
         viewModelScope.launch {
-            screenState.apply {
-                val flavors = if (isUpdatingProduct) flavors.splitAndTrim()
-                else flavors.split(",")
+            val product = screenState.toProduct(isUpdatingProduct = isUpdatingProduct)
 
-                val product = Product(
-                    id = id,
-                    title = title,
-                    description = description,
-                    thumbnail = thumbnail,
-                    category = category.name,
-                    flavors = flavors,
-                    weight = weight,
-                    price = price
-                )
-
-                if (isUpdatingProduct) {
-                    adminRepository.updateProduct(product, onSuccess, onError)
-                } else {
-                    adminRepository.createNewProduct(product, onSuccess, onError)
-                }
+            if (isUpdatingProduct) {
+                adminRepository.updateProduct(product, onSuccess, onError)
+            } else {
+                adminRepository.createNewProduct(product, onSuccess, onError)
             }
         }
     }
@@ -176,9 +177,24 @@ class ManageProductViewModel(
             adminRepository.deleteImageFromStorage(
                 downloadUrl = screenState.thumbnail,
                 onSuccess = {
-                    updateThumbnail(value = "")
-                    updateThumbnailUploaderState(RequestState.Idle)
-                    onSuccess()
+                    productId.takeIf { it.isNotEmpty() }?.let { id ->
+                        viewModelScope.launch {
+                            adminRepository.updateImageThumbnail(
+                                productId = id,
+                                downloadUrl = "",
+                                onSuccess = {
+                                    updateThumbnail(value = "")
+                                    updateThumbnailUploaderState(RequestState.Idle)
+                                    onSuccess()
+                                },
+                                onError = { message -> onError(message) }
+                            )
+                        }
+                    } ?: run {
+                        updateThumbnail(value = "")
+                        updateThumbnailUploaderState(RequestState.Idle)
+                        onSuccess()
+                    }
                 },
                 onError = onError
             )
