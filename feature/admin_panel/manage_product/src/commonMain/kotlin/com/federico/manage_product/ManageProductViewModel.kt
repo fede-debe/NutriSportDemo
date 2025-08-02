@@ -10,6 +10,7 @@ import com.federico.data.domain.AdminRepository
 import com.nutrisportdemo.shared.domain.Product
 import com.nutrisportdemo.shared.domain.ProductCategory
 import com.nutrisportdemo.shared.util.RequestState
+import com.nutrisportdemo.shared.util.splitAndTrim
 import dev.gitlive.firebase.storage.File
 import kotlinx.coroutines.launch
 import kotlin.uuid.ExperimentalUuidApi
@@ -49,17 +50,24 @@ class ManageProductViewModel(
                 if (selectedProduct.isSuccess()) {
                     val product = selectedProduct.getSuccessData()
 
-                    updateTitle(product.title)
-                    updateDescription(product.description)
-                    updateThumbnail(product.thumbnail)
-                    updateThumbnailUploaderState(RequestState.Success(Unit))
-                    updateCategory(ProductCategory.valueOf(product.category))
-                    updateFlavors(product.flavors?.joinToString(",") ?: "")
-                    updateWeight(product.weight)
-                    updatePrice(product.price)
+                    product.apply {
+                        updateId(id)
+                        updateTitle(title)
+                        updateDescription(description)
+                        updateThumbnail(thumbnail)
+                        updateThumbnailUploaderState(RequestState.Success(Unit))
+                        updateCategory(ProductCategory.valueOf(category))
+                        updateFlavors(flavors?.joinToString(",") ?: "")
+                        updateWeight(weight)
+                        updatePrice(price)
+                    }
                 }
             }
         }
+    }
+
+    fun updateId(value: String) {
+        screenState = screenState.copy(id = value)
     }
 
     fun updateTitle(value: String) {
@@ -94,23 +102,29 @@ class ManageProductViewModel(
         screenState = screenState.copy(price = value)
     }
 
-    fun createNewProduct(onSuccessful: () -> Unit, onError: (String) -> Unit) {
+    fun submitProduct(isUpdate: Boolean, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             screenState.apply {
-                adminRepository.createNewProduct(
-                    product = Product(
-                        id = id,
-                        title = title,
-                        description = description,
-                        thumbnail = thumbnail,
-                        category = category.name,
-                        flavors = flavors.split(","),
-                        weight = weight,
-                        price = price
-                    ),
-                    onSuccess = onSuccessful,
-                    onError = onError
+                val flavors = if (isUpdate)
+                    flavors.splitAndTrim()
+                else
+                    flavors.split(",")
+                val product = Product(
+                    id = id,
+                    title = title,
+                    description = description,
+                    thumbnail = thumbnail,
+                    category = category.name,
+                    flavors = flavors,
+                    weight = weight,
+                    price = price
                 )
+
+                if (isUpdate) {
+                    adminRepository.updateProduct(product, onSuccess, onError)
+                } else {
+                    adminRepository.createNewProduct(product, onSuccess, onError)
+                }
             }
         }
     }
@@ -134,9 +148,24 @@ class ManageProductViewModel(
                     throw Exception("Failed to retrieve a download URL after the upload.")
                 }
 
-                onSuccess()
-                updateThumbnailUploaderState(RequestState.Success(Unit))
-                updateThumbnail(downloadUrl)
+                productId.takeIf { it.isNotEmpty() }?.let { id ->
+                    adminRepository.updateImageThumbnail(
+                        productId = id,
+                        downloadUrl = downloadUrl,
+                        onSuccess = {
+                            onSuccess()
+                            updateThumbnailUploaderState(RequestState.Success(Unit))
+                            updateThumbnail(downloadUrl)
+                        },
+                        onError = { message ->
+                            updateThumbnailUploaderState(RequestState.Error(message))
+                        }
+                    )
+                } ?: run {
+                    onSuccess()
+                    updateThumbnailUploaderState(RequestState.Success(Unit))
+                    updateThumbnail(downloadUrl)
+                }
             } catch (e: Exception) {
                 updateThumbnailUploaderState(RequestState.Error("Error while uploading: $e"))
             }
