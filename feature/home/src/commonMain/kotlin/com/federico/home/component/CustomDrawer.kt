@@ -1,5 +1,6 @@
 package com.federico.home.component
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -16,9 +17,12 @@ import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.TextPrimary
 import com.nutrisportdemo.shared.TextSecondary
 import com.nutrisportdemo.shared.bebasNeueFont
+import com.nutrisportdemo.shared.domain.Customer
+import com.nutrisportdemo.shared.util.RequestState
 
 @Composable
 fun CustomDrawer(
+    customer: RequestState<Customer>,
     onProfileClick: () -> Unit,
     onContactUsClick: () -> Unit,
     onSignOutClick: () -> Unit,
@@ -60,10 +64,15 @@ fun CustomDrawer(
             Spacer(modifier = Modifier.height(12.dp))
         }
         Spacer(modifier = Modifier.weight(1f))
-        DrawerItemCard(
-            drawerItem = DrawerItem.Admin,
-            onClick = onAdminPanelClick
-        )
+        AnimatedContent(targetState = customer) { customerState ->
+            if (customerState.isSuccess() && customerState.getSuccessData().isAdmin) {
+                DrawerItemCard(
+                    drawerItem = DrawerItem.Admin,
+                    onClick = onAdminPanelClick
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
     }
 }
