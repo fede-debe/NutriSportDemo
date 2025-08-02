@@ -45,6 +45,10 @@ class CustomerRepositoryImpl : CustomerRepository {
                     onSuccess()
                 } else {
                     customerCollection.document(user.uid).set(customer)
+                    customerCollection.document(user.uid)
+                        .collection("privateData")
+                        .document("role")
+                        .set(mapOf("isAdmin" to false))
                     onSuccess()
                 }
             } else {
@@ -66,6 +70,12 @@ class CustomerRepositoryImpl : CustomerRepository {
                         .document(userId).snapshots.collectLatest { document ->
                         when {
                             document.exists -> {
+                                val privateDataDocument = database.collection("customer")
+                                    .document(userId)
+                                    .collection("privateData")
+                                    .document("role")
+                                    .get()
+
                                 /** When this customer changes, the flow will update and send the updated version to the UI */
                                 val customer = Customer(
                                     id = document.id,
@@ -76,7 +86,8 @@ class CustomerRepositoryImpl : CustomerRepository {
                                     postalCode = document.get(field = "postalCode"),
                                     address = document.get(field = "address"),
                                     phoneNumber = document.get(field = "phoneNumber"),
-                                    cart = document.get(field = "cart")
+                                    cart = document.get(field = "cart"),
+                                    isAdmin = privateDataDocument.get(field = "isAdmin")
                                 )
                                 send(RequestState.Success(data = customer))
                             }
