@@ -1,6 +1,7 @@
 package com.federico.data
 
 import com.federico.data.domain.AdminRepository
+import com.federico.mapper.toProduct
 import com.nutrisportdemo.shared.domain.Product
 import com.nutrisportdemo.shared.util.RequestState
 import dev.gitlive.firebase.Firebase
@@ -88,22 +89,7 @@ class AdminRepositoryImpl : AdminRepository {
                     .limit(10)
                     .snapshots
                     .collectLatest { query ->
-                        val products = query.documents.map { document ->
-                            Product(
-                                id = document.id,
-                                title = document.get("title"),
-                                createdAt = document.get("createdAt"),
-                                description = document.get("description"),
-                                thumbnail = document.get("thumbnail"),
-                                category = document.get("category"),
-                                flavors = document.get("flavors"),
-                                weight = document.get("weight"),
-                                price = document.get("price"),
-                                isPopular = document.get("isPopular"),
-                                isDiscounted = document.get("isDiscounted"),
-                                isNew = document.get("isNew")
-                            )
-                        }
+                        val products = query.documents.map { document -> document.toProduct() }
                         send(RequestState.Success(products))
                     }
             } else {
@@ -124,21 +110,7 @@ class AdminRepositoryImpl : AdminRepository {
                     .document(productId)
                     .get()
                 if (productDocument.exists) {
-                    val product = Product(
-                            id = productDocument.id,
-                            title = productDocument.get("title"),
-                            createdAt = productDocument.get("createdAt"),
-                            description = productDocument.get("description"),
-                            thumbnail = productDocument.get("thumbnail"),
-                            category = productDocument.get("category"),
-                            flavors = productDocument.get("flavors"),
-                            weight = productDocument.get("weight"),
-                            price = productDocument.get("price"),
-                            isPopular = productDocument.get("isPopular"),
-                            isDiscounted = productDocument.get("isDiscounted"),
-                            isNew = productDocument.get("isNew")
-                        )
-                    RequestState.Success(product)
+                    RequestState.Success(productDocument.toProduct())
                 } else {
                     RequestState.Error("Selected product not found.")
                 }
@@ -172,5 +144,64 @@ class AdminRepositoryImpl : AdminRepository {
         return encodedPath
             .replace("%2F", "/")
             .replace("%20", " ")
+    }
+
+    override suspend fun updateImageThumbnail(
+        productId: String,
+        downloadUrl: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        try {
+            val userId = getCurrentUserId()
+            if (userId != null) {
+                val database = Firebase.firestore
+                val productCollection = database.collection("product")
+                val existingProduct = productCollection
+                    .document(productId)
+                    .get()
+
+                if (existingProduct.exists) {
+                    productCollection.document(productId)
+                        .update("thumbnail" to downloadUrl)
+                    onSuccess()
+                } else {
+                    onError("Selected Product not found.")
+                }
+            } else {
+                onError("User is not available.")
+            }
+        } catch (e: Exception) {
+            onError("Error while updating a thumbnail image: ${e.message}")
+        }
+    }
+
+    override suspend fun updateProduct(
+        product: Product,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        try {
+            val userId = getCurrentUserId()
+            if (userId != null) {
+                val database = Firebase.firestore
+                val productCollection = database.collection("product")
+                val existingProduct = productCollection
+                    .document(product.id)
+                    .get()
+
+                if (existingProduct.exists) {
+                    productCollection.document(product.id)
+                        .update(product)
+                    onSuccess()
+                } else {
+                    onError("Selected Product not found.")
+                }
+            } else {
+                onError("User is not available.")
+            }
+        } catch (e: Exception) {
+            onError("Error while updating a product: ${e.message}")
+        }
     }
 }
