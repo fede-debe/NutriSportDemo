@@ -18,6 +18,9 @@ fun ManageProductState.toProduct(isUpdatingProduct: Boolean): Product {
         category = this.category.name,
         flavors = flavors,
         weight = this.weight,
-        price = this.price
+        price = this.price,
+        isPopular = this.isPopular,
+        isNew = this.isNew,
+        isDiscounted = this.isDiscounted
     )
 }

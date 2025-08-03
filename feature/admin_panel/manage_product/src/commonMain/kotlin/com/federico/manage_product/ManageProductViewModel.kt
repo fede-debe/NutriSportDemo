@@ -30,6 +30,9 @@ data class ManageProductState @OptIn(
     val flavors: String = "",
     val weight: Int? = null,
     val price: Double = 0.0,
+    val isPopular: Boolean = false,
+    val isDiscounted: Boolean = false,
+    val isNew: Boolean = false
 )
 
 class ManageProductViewModel(
@@ -67,6 +70,9 @@ class ManageProductViewModel(
                         updateFlavors(flavors?.joinToString(",") ?: "")
                         updateWeight(weight)
                         updatePrice(price)
+                        updateIsPopular(isPopular)
+                        updateIsDiscounted(isDiscounted)
+                        updateIsNew(isNew)
                     }
                 }
             }
@@ -111,6 +117,18 @@ class ManageProductViewModel(
 
     fun updatePrice(value: Double) {
         screenState = screenState.copy(price = value)
+    }
+
+    fun updateIsNew(value: Boolean) {
+        screenState = screenState.copy(isNew = value)
+    }
+
+    fun updateIsPopular(value: Boolean) {
+        screenState = screenState.copy(isPopular = value)
+    }
+
+    fun updateIsDiscounted(value: Boolean) {
+        screenState = screenState.copy(isDiscounted = value)
     }
 
     fun submitProduct(
