@@ -5,15 +5,25 @@ import androidx.lifecycle.viewModelScope
 import com.federico.data.domain.ProductRepository
 import com.nutrisportdemo.shared.util.RequestState
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 class ProductsOverviewViewModel(
     productRepository: ProductRepository
 ) : ViewModel() {
-    val products = productRepository.readDiscountedProducts()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = RequestState.Loading
-        )
+    val products = combine(productRepository.readNewProducts(), productRepository.readDiscountedProducts()) { new, discounted ->
+        when {
+            new.isSuccess() && discounted.isSuccess() -> {
+                RequestState.Success(new.getSuccessData() + discounted.getSuccessData())
+            }
+
+            new.isError() -> new
+            discounted.isError() -> discounted
+            else -> RequestState.Loading
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = RequestState.Loading
+    )
 }

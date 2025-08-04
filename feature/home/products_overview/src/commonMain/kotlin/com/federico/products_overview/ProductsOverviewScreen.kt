@@ -72,9 +72,10 @@ fun ProductsOverviewScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center
                         ) {
+                            // index value used to calculate which element is the center
                             itemsIndexed(
                                 items = products
-                                    .filter { it.isNew == true }
+                                    .filter { it.isNew }
                                     .sortedBy { it.createdAt }
                                     .take(6),
                                 key = { index, item -> item.id }
