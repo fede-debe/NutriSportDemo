@@ -2,6 +2,7 @@ package com.federico.data.domain
 
 import com.federico.mapper.toProduct
 import com.nutrisportdemo.shared.domain.Product
+import com.nutrisportdemo.shared.domain.ProductCategory
 import com.nutrisportdemo.shared.util.RequestState
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.auth
@@ -57,4 +58,81 @@ class ProductRepositoryImpl: ProductRepository {
             send(RequestState.Error("Error while reading the last 10 items from the database: ${e.message}"))
         }
     }
+
+    override fun readProductByIdFlow(id: String): Flow<RequestState<Product>> = channelFlow {
+        try {
+            val userId = getCurrentUserId()
+            if (userId != null) {
+                val database = Firebase.firestore
+                database.collection(collectionPath = "product")
+                    .document(id)
+                    .snapshots
+                    .collectLatest { document ->
+                        if (document.exists) {
+                            val product = document.toProduct()
+                            send(RequestState.Success(product.copy(title = product.title.uppercase())))
+                        } else {
+                            send(RequestState.Error("Selected product does not exist."))
+                        }
+                    }
+            } else {
+                send(RequestState.Error("User is not available."))
+            }
+        } catch (e: Exception) {
+            send(RequestState.Error("Error while reading a selected product: ${e.message}"))
+        }
+    }
+
+    override fun readProductsByIdsFlow(ids: List<String>): Flow<RequestState<List<Product>>> =
+        channelFlow {
+            try {
+                val userId = getCurrentUserId()
+                if (userId != null) {
+                    val database = Firebase.firestore
+                    val productCollection = database.collection(collectionPath = "product")
+
+                    val allProducts = mutableListOf<Product>()
+                    val chunks = ids.chunked(10)
+
+                    chunks.forEachIndexed { index, chunk ->
+                        productCollection
+                            .where { "id" inArray chunk }
+                            .snapshots
+                            .collectLatest { query ->
+                                val products = query.documents.map { document -> document.toProduct() }
+                                allProducts.addAll(products.map { it.copy(title = it.title.uppercase()) })
+
+                                if (index == chunks.lastIndex) {
+                                    send(RequestState.Success(allProducts))
+                                }
+                            }
+                    }
+                } else {
+                    send(RequestState.Error("User is not available."))
+                }
+            } catch (e: Exception) {
+                send(RequestState.Error("Error while reading a selected product: ${e.message}"))
+            }
+        }
+
+    override fun readProductsByCategoryFlow(category: ProductCategory): Flow<RequestState<List<Product>>> =
+        channelFlow {
+            try {
+                val userId = getCurrentUserId()
+                if (userId != null) {
+                    val database = Firebase.firestore
+                    database.collection(collectionPath = "product")
+                        .where { "category" equalTo category.name }
+                        .snapshots
+                        .collectLatest { query ->
+                            val products = query.documents.map { document -> document.toProduct() }
+                            send(RequestState.Success(products.map { it.copy(title = it.title.uppercase()) }))
+                        }
+                } else {
+                    send(RequestState.Error("User is not available."))
+                }
+            } catch (e: Exception) {
+                send(RequestState.Error("Error while reading a selected product: ${e.message}"))
+            }
+        }
 }
