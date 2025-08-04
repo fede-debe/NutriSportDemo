@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.federico.admin_panel.AdminPanelScreen
 import com.federico.auth.AuthScreen
+import com.federico.details.DetailsScreen
 import com.federico.home.HomeGraphScreen
 import com.federico.manage_product.ManageProductScreen
 import com.federico.profile.ProfileScreen
@@ -36,6 +37,9 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
                 },
                 navigateToAdminPanel = {
                     navController.navigate(Screen.AdminPanel)
+                },
+                navigateToDetails = { productId ->
+                    navController.navigate(Screen.Details(productId = productId))
                 })
         }
         composable<Screen.Profile> {
@@ -61,6 +65,14 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
             ManageProductScreen(
                 id = productId,
                 navigateBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+        composable<Screen.Details> {
+            DetailsScreen(
+                navigateBack = {
+                    /** pop our current screen from the back stack and navigate to the previous screen (HomeGraph) */
                     navController.navigateUp()
                 }
             )

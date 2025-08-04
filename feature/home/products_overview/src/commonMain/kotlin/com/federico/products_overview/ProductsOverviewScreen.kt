@@ -40,7 +40,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun ProductsOverviewScreen(
-    navigateToDetails: (String) -> Unit = {},
+    navigateToDetails: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<ProductsOverviewViewModel>()
     val products by viewModel.products.collectAsState()

@@ -8,6 +8,7 @@ import com.federico.data.domain.AdminRepository
 import com.federico.data.domain.CustomerRepository
 import com.federico.data.domain.ProductRepository
 import com.federico.data.domain.ProductRepositoryImpl
+import com.federico.details.DetailsViewModel
 import com.federico.home.HomeGraphViewModel
 import com.federico.manage_product.ManageProductViewModel
 import com.federico.products_overview.ProductsOverviewViewModel
@@ -33,6 +34,7 @@ val sharedModule = module {
     viewModelOf(::ManageProductViewModel)
     viewModelOf(::AdminPanelViewModel)
     viewModelOf(::ProductsOverviewViewModel)
+    viewModelOf(::DetailsViewModel)
 }
 
 /** the reason why I'm using a targetModule is because that I need to provide
