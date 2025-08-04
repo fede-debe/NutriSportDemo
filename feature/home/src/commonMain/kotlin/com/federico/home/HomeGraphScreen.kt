@@ -45,6 +45,7 @@ import com.federico.home.domain.BottomBarDestination
 import com.federico.home.domain.CustomDrawerState
 import com.federico.home.domain.isOpened
 import com.federico.home.domain.switchState
+import com.federico.products_overview.ProductsOverviewScreen
 import com.nutrisportdemo.shared.Alpha
 import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.IconPrimary
@@ -209,7 +210,9 @@ fun HomeGraphScreen(
                             navController = navController,
                             startDestination = Screen.ProductsOverview
                         ) {
-                            composable<Screen.ProductsOverview> {}
+                            composable<Screen.ProductsOverview> {
+                                ProductsOverviewScreen()
+                            }
                             composable<Screen.Cart> {}
                             composable<Screen.Categories> {}
                         }
