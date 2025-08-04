@@ -22,12 +22,19 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "di"
+            baseName = "details"
             isStatic = true
         }
     }
 
     sourceSets {
+        androidMain.dependencies {
+            implementation(libs.androidx.compose.ui.tooling)
+            implementation(libs.ktor.client.android)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -38,18 +45,19 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
-            implementation(project(":feature:auth"))
-            implementation(project(":feature:home"))
-            implementation(project(":feature:home:products_overview"))
-            implementation(project(":feature:profile"))
-            implementation(project(":feature:details"))
-            implementation(project(":feature:admin_panel"))
-            implementation(project(":feature:admin_panel:manage_product"))
-            implementation(project(":data"))
+            implementation(libs.messagebar.kmp)
+
+            implementation(libs.coil3)
+            implementation(libs.coil3.compose)
+            implementation(libs.coil3.compose.core)
+            /** because of this dependency we need to declare the ktor dependencies for each target (ios, android) */
+            implementation(libs.coil3.network.ktor3)
+
+            implementation(project(path = ":shared"))
+            implementation(project(path = ":data"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -58,7 +66,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.federico.di"
+    namespace = "com.federico.details"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
