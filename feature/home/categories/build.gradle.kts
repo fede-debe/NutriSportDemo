@@ -22,12 +22,15 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "home"
+            baseName = "categories"
             isStatic = true
         }
     }
 
     sourceSets {
+        androidMain.dependencies {
+            implementation(libs.androidx.compose.ui.tooling)
+        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -38,18 +41,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
 
-            implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
-
-            implementation(libs.navigation.compose)
-            implementation(libs.messagebar.kmp)
-
             implementation(project(path = ":shared"))
             implementation(project(path = ":data"))
-            implementation(project(":feature:home:products_overview"))
-            implementation(project(":feature:home:cart"))
-            implementation(project(":feature:home:categories"))
-
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -58,7 +51,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.federico.home"
+    namespace = "com.federico.categories"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
