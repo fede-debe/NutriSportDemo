@@ -1,6 +1,7 @@
 package com.nutrisportdemo.shared
 
 import nutrisportdemo.shared.generated.resources.Res
+import nutrisportdemo.shared.generated.resources.android
 import nutrisportdemo.shared.generated.resources.back_arrow
 import nutrisportdemo.shared.generated.resources.book
 import nutrisportdemo.shared.generated.resources.cat
@@ -65,6 +66,7 @@ object Resources {
         val Cat = Res.drawable.cat
         val GoogleLogo = Res.drawable.google_logo
         val PaypalLogo = Res.drawable.paypal_logo
+        val Placeholder = Res.drawable.android
     }
 
     object Flag {
