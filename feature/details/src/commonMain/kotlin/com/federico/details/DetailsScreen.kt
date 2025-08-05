@@ -1,6 +1,7 @@
 package com.federico.details
 
 import ContentWithMessageBar
+import MessageBarState
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -56,13 +57,17 @@ import com.nutrisportdemo.shared.TextSecondary
 import com.nutrisportdemo.shared.TextWhite
 import com.nutrisportdemo.shared.bebasNeueFont
 import com.nutrisportdemo.shared.component.PrimaryButton
+import com.nutrisportdemo.shared.component.QuantityCounter
 import com.nutrisportdemo.shared.component.card.InfoCard
 import com.nutrisportdemo.shared.component.card.LoadingCard
+import com.nutrisportdemo.shared.domain.Product
 import com.nutrisportdemo.shared.domain.ProductCategory
+import com.nutrisportdemo.shared.domain.QuantityCounterSize
 import com.nutrisportdemo.shared.robotoCondensedFont
 import com.nutrisportdemo.shared.util.DisplayResult
+import com.nutrisportdemo.shared.util.RequestState
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun DetailsScreen(navigateBack: () -> Unit) {
     val messageBarState = rememberMessageBarState()
@@ -71,6 +76,35 @@ fun DetailsScreen(navigateBack: () -> Unit) {
     val quantity = viewModel.quantity
     val selectedFlavor = viewModel.selectedFlavor
 
+    DetailsScreen(
+        messageBarState = messageBarState,
+        product = product,
+        selectedFlavor = selectedFlavor,
+        quantity = quantity,
+        onUpdateQuantity = viewModel::updateQuantity,
+        onUpdateFlavor = viewModel::updateFlavor,
+        onAddItemToCart = {
+            viewModel.addItemToCart(
+                onSuccess = { messageBarState.addSuccess("Product added to cart.") },
+                onError = { message -> messageBarState.addError(message) }
+            )
+        },
+        navigateBack = navigateBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DetailsScreen(
+    messageBarState: MessageBarState,
+    product: RequestState<Product>,
+    selectedFlavor: String?,
+    quantity: Int,
+    onUpdateQuantity: (Int) -> Unit,
+    onUpdateFlavor: (String) -> Unit,
+    onAddItemToCart: () -> Unit,
+    navigateBack: () -> Unit
+) {
     Scaffold(
         containerColor = Surface,
         topBar = {
@@ -93,12 +127,12 @@ fun DetailsScreen(navigateBack: () -> Unit) {
                     }
                 },
                 actions = {
-//                    QuantityCounter(
-//                        size = QuantityCounterSize.Large,
-//                        value = quantity,
-//                        onMinusClick = viewModel::updateQuantity,
-//                        onPlusClick = viewModel::updateQuantity
-//                    )
+                    QuantityCounter(
+                        size = QuantityCounterSize.Large,
+                        value = quantity,
+                        onMinusClick = onUpdateQuantity,
+                        onPlusClick = onUpdateQuantity
+                    )
                     Spacer(modifier = Modifier.width(16.dp))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -225,7 +259,7 @@ fun DetailsScreen(navigateBack: () -> Unit) {
                                         FlavorChip(
                                             flavor = flavor,
                                             isSelected = selectedFlavor == flavor,
-                                            onClick = { viewModel.updateFlavor(flavor) }
+                                            onClick = { onUpdateFlavor(flavor) }
                                         )
                                         Spacer(modifier = Modifier.width(8.dp))
                                     }
@@ -237,12 +271,7 @@ fun DetailsScreen(navigateBack: () -> Unit) {
                                 text = "Add to Cart",
                                 enabled = if (selectedProduct.flavors?.isNotEmpty() == true) selectedFlavor != null
                                 else true,
-                                onClick = {
-                                    viewModel.addItemToCart(
-                                        onSuccess = { messageBarState.addSuccess("Product added to cart.") },
-                                        onError = { message -> messageBarState.addError(message) }
-                                    )
-                                }
+                                onClick = onAddItemToCart
                             )
                         }
                     }
