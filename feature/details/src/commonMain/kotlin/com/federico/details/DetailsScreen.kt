@@ -42,6 +42,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import rememberMessageBarState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextOverflow
 import com.federico.details.component.FlavorChip
 import com.nutrisportdemo.shared.BorderIdle
@@ -185,7 +186,8 @@ fun DetailsScreen(
                                     .crossfade(enable = true)
                                     .build(),
                                 contentDescription = "Product thumbnail image",
-                                contentScale = ContentScale.Crop
+                                contentScale = ContentScale.Crop,
+                                error = if (LocalInspectionMode.current) painterResource(Resources.Image.Placeholder) else null
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Row(
