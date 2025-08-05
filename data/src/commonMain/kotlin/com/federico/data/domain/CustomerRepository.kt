@@ -25,6 +25,21 @@ interface CustomerRepository {
         onSuccess: () -> Unit,
         onError: (String) -> Unit
     )
+    suspend fun updateCartItemQuantity(
+        id: String,
+        quantity: Int,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    )
+    suspend fun deleteCartItem(
+        id: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    )
+    suspend fun deleteAllCartItems(
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    )
     /** use Unit as no value, we could use a Boolean to return if we succeeded or not.
      * Since the RequestState class contains the error and success state,
      * we don't need to return a  value and use Unit.
