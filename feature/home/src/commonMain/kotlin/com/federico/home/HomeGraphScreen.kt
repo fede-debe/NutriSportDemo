@@ -223,6 +223,7 @@ fun HomeGraphScreen(
                         Spacer(modifier = Modifier.height(12.dp))
                         BottomBar(
                             selected = selectedDestination,
+                            customer = customer,
                             onSelect = { destination ->
                                 navController.navigate(destination.screen) {
                                     /**
