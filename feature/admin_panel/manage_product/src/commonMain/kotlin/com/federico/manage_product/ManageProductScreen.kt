@@ -1,6 +1,7 @@
 package com.federico.manage_product
 
 import ContentWithMessageBar
+import MessageBarState
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -76,7 +78,7 @@ import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import rememberMessageBarState
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
     val messageBarState = rememberMessageBarState()
@@ -85,7 +87,7 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
     val isFormValid = viewModel.isFormValid
     val thumbnailUploaderState = viewModel.thumbnailUploaderState
     var showCategoriesDialog by remember { mutableStateOf(false) }
-    var dropDownExpanded by remember { mutableStateOf(false) }
+
 
     val photoPicker = koinInject<PhotoPicker>()
 
@@ -98,13 +100,6 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
         }
     )
 
-    val topBarTitle = when {
-        id == null -> "New Product"
-        else -> "Edit Product"
-    }
-    val buttonTitle = if (id == null) "Add new product" else "Update"
-    val buttonIcon = if (id == null) Resources.Icon.Plus else Resources.Icon.Check
-
     AnimatedVisibility(visible = showCategoriesDialog) {
         CategoriesDialog(
             category = screenState.category,
@@ -115,6 +110,84 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
             }
         )
     }
+
+    ManageProductScreen(
+        id = id,
+        screenState = screenState,
+        messageBarState = messageBarState,
+        thumbnailUploaderState = thumbnailUploaderState,
+        isFormValid = isFormValid,
+        onDeleteProduct = {
+            viewModel.deleteProduct(
+                onSuccess = navigateBack,
+                onError = { message -> messageBarState.addError(message) })
+        },
+        onDeleteThumbnailFromStorage = {
+            viewModel.deleteThumbnailFromStorage(
+                onSuccess = {
+                    messageBarState.addSuccess("Thumbnail removed successfully.")
+                },
+                onError = { message ->
+                    messageBarState.addError(message)
+                }
+            )
+        },
+        onUpdateThumbnailUploaderState = {
+            viewModel.updateThumbnailUploaderState(RequestState.Idle)
+        },
+        onOpenPhotoPicker = { photoPicker.open() },
+        onUpdateTitle = viewModel::updateTitle,
+        onUpdateDescription = viewModel::updateDescription,
+        onUpdateWeight = viewModel::updateWeight,
+        onUpdateFlavors = viewModel::updateFlavors,
+        onUpdatePrice = viewModel::updatePrice,
+        onUpdateIsNew = viewModel::updateIsNew,
+        onUpdateIsPopular = viewModel::updateIsPopular,
+        onUpdateIsDiscounted = viewModel::updateIsDiscounted,
+        onToggleCategoryDialog = { showCategoriesDialog = true },
+        onSubmitProduct = {
+            viewModel.submitProduct(
+                isUpdatingProduct = id != null,
+                onSuccess = { messageBarState.addSuccess("Product Successfully added!") },
+                onError = { message -> messageBarState.addError(message) }
+            )
+        },
+        navigateBack = navigateBack
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ManageProductScreen(
+    id: String?,
+    screenState: ManageProductState,
+    messageBarState: MessageBarState,
+    thumbnailUploaderState: RequestState<Unit>,
+    isFormValid: Boolean,
+    onOpenPhotoPicker: () -> Unit,
+    onDeleteProduct: () -> Unit,
+    onDeleteThumbnailFromStorage: () -> Unit,
+    onUpdateThumbnailUploaderState: () -> Unit,
+    onUpdateTitle: (String) -> Unit,
+    onUpdateDescription: (String) -> Unit,
+    onUpdateWeight: (String) -> Unit,
+    onUpdateFlavors: (String) -> Unit,
+    onUpdatePrice: (String) -> Unit,
+    onUpdateIsNew: (Boolean) -> Unit,
+    onUpdateIsPopular: (Boolean) -> Unit,
+    onUpdateIsDiscounted: (Boolean) -> Unit,
+    onToggleCategoryDialog: () -> Unit,
+    onSubmitProduct: () -> Unit,
+    navigateBack: () -> Unit
+) {
+    var dropDownExpanded by remember { mutableStateOf(false) }
+
+    val topBarTitle = when {
+        id == null -> "New Product"
+        else -> "Edit Product"
+    }
+    val buttonTitle = if (id == null) "Add new product" else "Update"
+    val buttonIcon = if (id == null) Resources.Icon.Plus else Resources.Icon.Check
 
     Scaffold(containerColor = Surface, topBar = {
         TopAppBar(
@@ -158,12 +231,11 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                         contentDescription = "Delete icon",
                                         tint = IconPrimary
                                     )
-                                }, text = { Text(text = "Delete", color = TextPrimary) },
+                                },
+                                text = { Text(text = "Delete", color = TextPrimary) },
                                 onClick = {
                                     dropDownExpanded = false
-                                    viewModel.deleteProduct(
-                                        onSuccess = navigateBack,
-                                        onError = { message -> messageBarState.addError(message) })
+                                    onDeleteProduct()
                                 },
                             )
                         }
@@ -210,7 +282,7 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                             )
                             .background(SurfaceLighter)
                             .clickable(enabled = thumbnailUploaderState.isIdle()) {
-                                photoPicker.open()
+                                onOpenPhotoPicker()
                             },
                         contentAlignment = Alignment.Center
                     ) {
@@ -239,7 +311,10 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                             .crossfade(enable = true)
                                             .build(),
                                         contentDescription = "Product thumbnail image",
-                                        contentScale = ContentScale.Crop
+                                        contentScale = ContentScale.Crop,
+                                        error = if (LocalInspectionMode.current) painterResource(
+                                            Resources.Image.Placeholder
+                                        ) else null,
                                     )
 
                                     Box(
@@ -250,16 +325,7 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                                 end = 12.dp
                                             )
                                             .background(ButtonPrimary)
-                                            .clickable {
-                                                viewModel.deleteThumbnailFromStorage(
-                                                    onSuccess = {
-                                                        messageBarState.addSuccess("Thumbnail removed successfully.")
-                                                    },
-                                                    onError = { message ->
-                                                        messageBarState.addError(message)
-                                                    }
-                                                )
-                                            }
+                                            .clickable { onDeleteThumbnailFromStorage() }
                                             .padding(all = 12.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
@@ -282,9 +348,7 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                     )
                                     Spacer(modifier = Modifier.height(12.dp))
                                     TextButton(
-                                        onClick = {
-                                            viewModel.updateThumbnailUploaderState(RequestState.Idle)
-                                        },
+                                        onClick = onUpdateThumbnailUploaderState,
                                         colors = ButtonDefaults.textButtonColors(
                                             containerColor = Color.Transparent
                                         )
@@ -302,14 +366,14 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
 
                     CustomTextField(
                         value = screenState.title,
-                        onValueChange = viewModel::updateTitle,
+                        onValueChange = onUpdateTitle,
                         placeholder = "Title"
                     )
 
                     CustomTextField(
                         modifier = Modifier.height(168.dp),
                         value = screenState.description,
-                        onValueChange = viewModel::updateDescription,
+                        onValueChange = onUpdateDescription,
                         placeholder = "Description",
                         expanded = true
                     )
@@ -317,14 +381,14 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                     AlertTextField(
                         modifier = Modifier.fillMaxWidth(),
                         text = screenState.category.title,
-                        onClick = { showCategoriesDialog = true }
+                        onClick = onToggleCategoryDialog
                     )
 
                     AnimatedVisibility(visible = screenState.category != ProductCategory.Accessories) {
                         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             CustomTextField(
                                 value = "${screenState.weight ?: ""}",
-                                onValueChange = { viewModel.updateWeight(it.toIntOrNull() ?: 0) },
+                                onValueChange = onUpdateWeight,
                                 placeholder = "Weight",
                                 keyboardOptions = KeyboardOptions(
                                     keyboardType = KeyboardType.Number
@@ -333,7 +397,7 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
 
                             CustomTextField(
                                 value = screenState.flavors,
-                                onValueChange = viewModel::updateFlavors,
+                                onValueChange = onUpdateFlavors,
                                 placeholder = "Flavors"
                             )
                         }
@@ -343,7 +407,7 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                         value = "${screenState.price}",
                         onValueChange = { value ->
                             if (value.isEmpty() || value.toDoubleOrNull() != null) {
-                                viewModel.updatePrice(value.toDoubleOrNull() ?: 0.0)
+                                onUpdatePrice(value)
                             }
                         },
                         placeholder = "Price",
@@ -362,8 +426,9 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                         ) {
                             Text(text = "New", fontSize = FontSize.REGULAR, color = TextPrimary)
 
-                            Switch(checked = screenState.isNew,
-                                onCheckedChange = viewModel::updateIsNew,
+                            Switch(
+                                checked = screenState.isNew,
+                                onCheckedChange = onUpdateIsNew,
                                 colors = SwitchDefaults.colors(
                                     checkedTrackColor = SurfaceSecondary,
                                     uncheckedTrackColor = SurfaceDarker,
@@ -371,7 +436,8 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                     uncheckedThumbColor = Surface,
                                     checkedBorderColor = SurfaceSecondary,
                                     uncheckedBorderColor = SurfaceDarker
-                                ))
+                                )
+                            )
                         }
 
                         Row(
@@ -381,8 +447,9 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                         ) {
                             Text(text = "Popular", fontSize = FontSize.REGULAR, color = TextPrimary)
 
-                            Switch(checked = screenState.isPopular,
-                                onCheckedChange = viewModel::updateIsPopular,
+                            Switch(
+                                checked = screenState.isPopular,
+                                onCheckedChange = onUpdateIsPopular,
                                 colors = SwitchDefaults.colors(
                                     checkedTrackColor = SurfaceSecondary,
                                     uncheckedTrackColor = SurfaceDarker,
@@ -390,7 +457,8 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                     uncheckedThumbColor = Surface,
                                     checkedBorderColor = SurfaceSecondary,
                                     uncheckedBorderColor = SurfaceDarker
-                                ))
+                                )
+                            )
                         }
 
                         Row(
@@ -398,10 +466,15 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = "Discount", fontSize = FontSize.REGULAR, color = TextPrimary)
+                            Text(
+                                text = "Discount",
+                                fontSize = FontSize.REGULAR,
+                                color = TextPrimary
+                            )
 
-                            Switch(checked = screenState.isDiscounted,
-                                onCheckedChange = viewModel::updateIsDiscounted,
+                            Switch(
+                                checked = screenState.isDiscounted,
+                                onCheckedChange = onUpdateIsDiscounted,
                                 colors = SwitchDefaults.colors(
                                     checkedTrackColor = SurfaceSecondary,
                                     uncheckedTrackColor = SurfaceDarker,
@@ -409,7 +482,8 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                                     uncheckedThumbColor = Surface,
                                     checkedBorderColor = SurfaceSecondary,
                                     uncheckedBorderColor = SurfaceDarker
-                                ))
+                                )
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(24.dp))
@@ -419,13 +493,8 @@ fun ManageProductScreen(id: String?, navigateBack: () -> Unit) {
                     text = buttonTitle,
                     enabled = isFormValid,
                     icon = buttonIcon,
-                    onClick = {
-                        viewModel.submitProduct(
-                            isUpdatingProduct = id != null,
-                            onSuccess = { messageBarState.addSuccess("Product Successfully added!") },
-                            onError = { message -> messageBarState.addError(message) }
-                        )
-                    })
+                    onClick = onSubmitProduct
+                )
             }
         }
     }

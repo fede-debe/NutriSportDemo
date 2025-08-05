@@ -29,7 +29,7 @@ data class ManageProductState @OptIn(
     val category: ProductCategory = ProductCategory.Protein,
     val flavors: String = "",
     val weight: Int? = null,
-    val price: Double = 0.0,
+    val price: Double? = null,
     val isPopular: Boolean = false,
     val isDiscounted: Boolean = false,
     val isNew: Boolean = false
@@ -68,8 +68,8 @@ class ManageProductViewModel(
                         updateThumbnailUploaderState(RequestState.Success(Unit))
                         updateCategory(ProductCategory.valueOf(category))
                         updateFlavors(flavors?.joinToString(",") ?: "")
-                        updateWeight(weight)
-                        updatePrice(price)
+                        updateWeight(weight?.toString() ?: "0")
+                        updatePrice(price?.toString() ?: "0.0")
                         updateIsPopular(isPopular)
                         updateIsDiscounted(isDiscounted)
                         updateIsNew(isNew)
@@ -111,12 +111,14 @@ class ManageProductViewModel(
         screenState = screenState.copy(flavors = value)
     }
 
-    fun updateWeight(value: Int?) {
-        screenState = screenState.copy(weight = value)
+    fun updateWeight(value: String) {
+        val weight = value.toIntOrNull() ?: 0
+        screenState = screenState.copy(weight = weight)
     }
 
-    fun updatePrice(value: Double) {
-        screenState = screenState.copy(price = value)
+    fun updatePrice(value: String) {
+        val price = value.toDoubleOrNull() ?: 0.0
+        screenState = screenState.copy(price = price)
     }
 
     fun updateIsNew(value: Boolean) {
