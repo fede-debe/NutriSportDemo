@@ -21,7 +21,7 @@ data class Product @OptIn(ExperimentalTime::class) constructor(
     val category: String,
     val flavors: List<String>? = null,
     val weight: Int? = null,
-    val price: Double,
+    val price: Double? = null,
     /** These 3 parameter below can be manually set from the firestore database */
     val isPopular: Boolean = false,
     val isDiscounted: Boolean = false,

@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -77,7 +78,8 @@ fun ProductCard(
                 .crossfade(enable = true)
                 .build(),
             contentDescription = "Product thumbnail image",
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            error = if (LocalInspectionMode.current) painterResource(Resources.Image.Placeholder) else null
         )
         Column(
             modifier = Modifier

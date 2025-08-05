@@ -26,11 +26,13 @@ import com.nutrisportdemo.shared.component.ProfileForm
 import com.nutrisportdemo.shared.component.QuantityCounter
 import com.nutrisportdemo.shared.component.card.ErrorCard
 import com.nutrisportdemo.shared.component.card.InfoCard
+import com.nutrisportdemo.shared.component.card.ProductCard
 import com.nutrisportdemo.shared.component.dialog.CategoriesDialog
 import com.nutrisportdemo.shared.component.dialog.CountryPickerDialog
 import com.nutrisportdemo.shared.component.textField.AlertTextField
 import com.nutrisportdemo.shared.component.textField.CustomTextField
 import com.nutrisportdemo.shared.domain.Country
+import com.nutrisportdemo.shared.domain.Product
 import com.nutrisportdemo.shared.domain.ProductCategory
 import com.nutrisportdemo.shared.domain.QuantityCounterSize
 import org.jetbrains.compose.resources.DrawableResource
@@ -293,6 +295,49 @@ fun ErrorCardPreview(
 class ErrorCardVariant : PreviewParameterProvider<String> {
     override val values = sequenceOf("Country not found", "Category not found")
 }
+
+@Preview(showBackground = true)
+@Composable
+fun ProductCardPreview(
+    @PreviewParameter(ProductPreviewParams::class) product: Product
+) {
+    MaterialTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            ProductCard(
+                product = product,
+                onClick = {}
+            )
+        }
+    }
+}
+
+class ProductPreviewParams : PreviewParameterProvider<Product> {
+    override val values: Sequence<Product> = sequenceOf(
+        Product(
+            id = "1",
+            title = "Whey Protein",
+            description = "High-quality protein supplement to support muscle growth.",
+            price = 39.99,
+            weight = 1000,
+            thumbnail = "https://joooinn.c",
+            category = ProductCategory.Protein.title
+        ),
+        Product(
+            id = "2",
+            title = "Shaker Bottle",
+            description = "Leak-proof shaker bottle with integrated mixer ball.",
+            price = 9.99,
+            weight = 0,
+            thumbnail = "",
+            category = ProductCategory.Accessories.name
+        )
+    )
+}
+
 
 @Preview(showBackground = true, name = "QuantityCounter Preview")
 @Composable
