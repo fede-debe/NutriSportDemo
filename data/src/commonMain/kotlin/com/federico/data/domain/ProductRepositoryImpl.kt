@@ -1,6 +1,6 @@
 package com.federico.data.domain
 
-import com.federico.mapper.toProduct
+import com.federico.mapper.toProductModel
 import com.nutrisportdemo.shared.domain.Product
 import com.nutrisportdemo.shared.domain.ProductCategory
 import com.nutrisportdemo.shared.util.RequestState
@@ -25,7 +25,7 @@ class ProductRepositoryImpl: ProductRepository {
                         .where { "isDiscounted" equalTo true }
                         .snapshots
                         .collectLatest { query ->
-                            val products = query.documents.map { document -> document.toProduct() }
+                            val products = query.documents.map { document -> document.toProductModel() }
                             send(RequestState.Success(data = products.map { it.copy(title = it.title.uppercase()) }))
                         }
                 } else {
@@ -48,7 +48,7 @@ class ProductRepositoryImpl: ProductRepository {
 //                    .where { "isDiscounted" equalTo true }
                     .snapshots
                     .collectLatest { query ->
-                        val products = query.documents.map { document -> document.toProduct() }
+                        val products = query.documents.map { document -> document.toProductModel() }
                         send(RequestState.Success(data = products.map { it.copy(title = it.title.uppercase()) }))
                     }
             } else {
@@ -69,7 +69,7 @@ class ProductRepositoryImpl: ProductRepository {
                     .snapshots
                     .collectLatest { document ->
                         if (document.exists) {
-                            val product = document.toProduct()
+                            val product = document.toProductModel()
                             send(RequestState.Success(product.copy(title = product.title.uppercase())))
                         } else {
                             send(RequestState.Error("Selected product does not exist."))
@@ -90,7 +90,16 @@ class ProductRepositoryImpl: ProductRepository {
                 if (userId != null) {
                     val database = Firebase.firestore
                     val productCollection = database.collection(collectionPath = "product")
-
+                    /**
+                     * creating multiple chunks because firebase query doesn't not support querying more
+                     * than 10 items at once. We can't have more than 10 ids in a query.
+                     *
+                     * forEach chunk we execute a query the product collection, to add those products with
+                     * the same ids from the chunk to a mutable list (allProducts).
+                     *
+                     * When we go through all those chunks (index == chunks.lastIndex), we can return all those products to the user
+                     * stored into allProducts.
+                     * */
                     val allProducts = mutableListOf<Product>()
                     val chunks = ids.chunked(10)
 
@@ -99,7 +108,7 @@ class ProductRepositoryImpl: ProductRepository {
                             .where { "id" inArray chunk }
                             .snapshots
                             .collectLatest { query ->
-                                val products = query.documents.map { document -> document.toProduct() }
+                                val products = query.documents.map { document -> document.toProductModel() }
                                 allProducts.addAll(products.map { it.copy(title = it.title.uppercase()) })
 
                                 if (index == chunks.lastIndex) {
@@ -125,7 +134,7 @@ class ProductRepositoryImpl: ProductRepository {
                         .where { "category" equalTo category.name }
                         .snapshots
                         .collectLatest { query ->
-                            val products = query.documents.map { document -> document.toProduct() }
+                            val products = query.documents.map { document -> document.toProductModel() }
                             send(RequestState.Success(products.map { it.copy(title = it.title.uppercase()) }))
                         }
                 } else {
