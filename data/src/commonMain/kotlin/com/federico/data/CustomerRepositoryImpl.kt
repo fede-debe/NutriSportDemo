@@ -163,6 +163,8 @@ class CustomerRepositoryImpl : CustomerRepository {
                 if (existingCustomer.exists) {
                     val existingCart = existingCustomer.get<List<CartItem>>("cart")
                     val updatedCart = existingCart + cartItem
+                    /** merge = true to preserve the rest of existing data in the document.
+                     * we are only updating  the cart field */
                     customerCollection.document(currentUserId)
                         .set(
                             data = mapOf("cart" to updatedCart),
