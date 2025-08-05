@@ -40,6 +40,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.federico.cart.CartScreen
+import com.federico.categories.CategoriesScreen
 import com.federico.home.component.BottomBar
 import com.federico.home.component.CustomDrawer
 import com.federico.home.domain.BottomBarDestination
@@ -73,7 +74,8 @@ fun HomeGraphScreen(
     navigateToAuth: () -> Unit,
     navigateToProfile: () -> Unit,
     navigateToAdminPanel: () -> Unit,
-    navigateToDetails: (String) -> Unit
+    navigateToDetails: (String) -> Unit,
+    navigateToCategorySearch: (String) -> Unit,
 ) {
     val viewModel = koinViewModel<HomeGraphViewModel>()
     val customer by viewModel.customer.collectAsState()
@@ -218,7 +220,11 @@ fun HomeGraphScreen(
                                 )
                             }
                             composable<Screen.Cart> { CartScreen() }
-                            composable<Screen.Categories> {}
+                            composable<Screen.Categories> {
+                                CategoriesScreen(
+                                    navigateToCategorySearch = navigateToCategorySearch
+                                )
+                            }
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                         BottomBar(
