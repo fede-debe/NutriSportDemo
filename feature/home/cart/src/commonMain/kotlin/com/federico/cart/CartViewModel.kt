@@ -22,6 +22,8 @@ class CartViewModel(
         .flatMapLatest { customerState ->
             if (customerState.isSuccess()) {
                 val productIds = customerState.getSuccessData().cart.map { it.productId }.toSet()
+                /** productIds.isNotEmpty() is a necessary check to avoid a infinite loading spinner showing
+                 *  since else branch is set to flowOf(RequestState.Loading) */
                 if (productIds.isNotEmpty()) {
                     productRepository.readProductsByIdsFlow(productIds.toList())
                 } else flowOf(RequestState.Success(emptyList()))

@@ -199,11 +199,13 @@ class CustomerRepositoryImpl : CustomerRepository {
                     .get()
                 if (existingCustomer.exists) {
                     val existingCart = existingCustomer.get<List<CartItem>>("cart")
+                    /** map existing cart list, and update quantity for the specific cart item */
                     val updatedCart = existingCart.map { cartItem ->
                         if (cartItem.id == id) {
                             cartItem.copy(quantity = quantity)
                         } else cartItem
                     }
+                    /** update cart field with the updated cart list quantity*/
                     customerCollection.document(currentUserId)
                         .update(data = mapOf("cart" to updatedCart))
                     onSuccess()
@@ -234,6 +236,7 @@ class CustomerRepositoryImpl : CustomerRepository {
                     .get()
                 if (existingCustomer.exists) {
                     val existingCart = existingCustomer.get<List<CartItem>>("cart")
+                    /** remove selected cart item from the list and then we update the list */
                     val updatedCart = existingCart.filterNot { it.id == id }
                     customerCollection.document(currentUserId)
                         .update(data = mapOf("cart" to updatedCart))

@@ -123,6 +123,7 @@ fun CartScreen(
                     subtitle = message
                 )
             },
+            // default animation is not convenient with this case
             transitionSpec = fadeIn() togetherWith fadeOut()
         )
     }
