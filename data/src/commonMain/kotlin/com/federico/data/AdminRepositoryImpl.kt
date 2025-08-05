@@ -1,7 +1,7 @@
 package com.federico.data
 
 import com.federico.data.domain.AdminRepository
-import com.federico.mapper.toProduct
+import com.federico.mapper.toProductModel
 import com.nutrisportdemo.shared.domain.Product
 import com.nutrisportdemo.shared.util.RequestState
 import dev.gitlive.firebase.Firebase
@@ -91,7 +91,7 @@ class AdminRepositoryImpl : AdminRepository {
                     .limit(10)
                     .snapshots
                     .collectLatest { query ->
-                        val products = query.documents.map { document -> document.toProduct() }
+                        val products = query.documents.map { document -> document.toProductModel() }
                         send(RequestState.Success(data = products.map { it.copy(title = it.title.uppercase()) }))
                     }
             } else {
@@ -112,7 +112,7 @@ class AdminRepositoryImpl : AdminRepository {
                     .document(productId)
                     .get()
                 if (productDocument.exists) {
-                    val product = productDocument.toProduct()
+                    val product = productDocument.toProductModel()
                     RequestState.Success(product.copy(title = product.title.uppercase()))
                 } else {
                     RequestState.Error("Selected product not found.")
@@ -253,7 +253,7 @@ class AdminRepositoryImpl : AdminRepository {
 //                        .endAt(endText)
                         .snapshots
                         .collectLatest { query ->
-                            val products = query.documents.map { document -> document.toProduct() }
+                            val products = query.documents.map { document -> document.toProductModel() }
                             send(RequestState.Success(data = products
                                 .filter { it.title.contains(searchQuery, ignoreCase = true) }
                                 .map { it.copy(title = it.title.uppercase()) }))

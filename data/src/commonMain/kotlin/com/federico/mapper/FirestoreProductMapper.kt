@@ -3,7 +3,7 @@ package com.federico.mapper
 import com.nutrisportdemo.shared.domain.Product
 import dev.gitlive.firebase.firestore.DocumentSnapshot
 
-fun DocumentSnapshot.toProduct(): Product {
+fun DocumentSnapshot.toProductModel(): Product {
     return Product(
         id = id,
         title = get("title"),
