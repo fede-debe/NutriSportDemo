@@ -23,6 +23,7 @@ import com.nutrisportdemo.shared.FontSize
 import com.nutrisportdemo.shared.Resources
 import com.nutrisportdemo.shared.component.PrimaryButton
 import com.nutrisportdemo.shared.component.ProfileForm
+import com.nutrisportdemo.shared.component.QuantityCounter
 import com.nutrisportdemo.shared.component.card.ErrorCard
 import com.nutrisportdemo.shared.component.card.InfoCard
 import com.nutrisportdemo.shared.component.dialog.CategoriesDialog
@@ -31,9 +32,10 @@ import com.nutrisportdemo.shared.component.textField.AlertTextField
 import com.nutrisportdemo.shared.component.textField.CustomTextField
 import com.nutrisportdemo.shared.domain.Country
 import com.nutrisportdemo.shared.domain.ProductCategory
+import com.nutrisportdemo.shared.domain.QuantityCounterSize
 import org.jetbrains.compose.resources.DrawableResource
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "CustomTextField Preview")
 @Composable
 fun CustomTextFieldPreviews(
     @PreviewParameter(CustomTextFieldVariant::class) isError: Boolean
@@ -42,15 +44,8 @@ fun CustomTextFieldPreviews(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(8.dp)
         ) {
-            Text(
-                text = "CustomTextField",
-                fontSize = FontSize.REGULAR,
-                fontWeight = FontWeight.SemiBold
-            )
-
             var text by remember { mutableStateOf("") }
             CustomTextField(
                 value = text,
@@ -68,7 +63,7 @@ class CustomTextFieldVariant : PreviewParameterProvider<Boolean> {
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "AlertTextField Preview")
 @Composable
 fun AlertTextFieldPreview(
     @PreviewParameter(AlertTextFieldVariant::class) icon: DrawableResource?
@@ -77,15 +72,8 @@ fun AlertTextFieldPreview(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(8.dp)
         ) {
-            Text(
-                text = "AlertTextField",
-                fontSize = FontSize.REGULAR,
-                fontWeight = FontWeight.SemiBold
-            )
-
             AlertTextField(text = "Some alert", icon = icon, onClick = {})
         }
     }
@@ -95,7 +83,7 @@ class AlertTextFieldVariant : PreviewParameterProvider<DrawableResource?> {
     override val values = sequenceOf(Resources.Icon.Plus, null)
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "PrimaryButton Preview")
 @Composable
 fun PrimaryButtonPreview(
     @PreviewParameter(PrimaryButtonVariant::class) isEnabled: Boolean
@@ -104,15 +92,8 @@ fun PrimaryButtonPreview(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(8.dp)
         ) {
-            Text(
-                text = "PrimaryButton",
-                fontSize = FontSize.REGULAR,
-                fontWeight = FontWeight.SemiBold
-            )
-
             PrimaryButton(text = "Continue", enabled = isEnabled, onClick = {})
         }
     }
@@ -122,7 +103,7 @@ class PrimaryButtonVariant : PreviewParameterProvider<Boolean> {
     override val values = sequenceOf(false, true)
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "ProfileForm Preview")
 @Composable
 fun ProfileFormPreview(
     @PreviewParameter(ProfileFormVariant::class) profile: ProfileFormData
@@ -210,7 +191,7 @@ class ProfileFormVariant : PreviewParameterProvider<ProfileFormData> {
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "CountryPickerDialog Preview")
 @Composable
 fun CountryPickerDialogPreview(
     @PreviewParameter(CountryPickerDialogVariant::class) country: Country
@@ -241,7 +222,7 @@ class CountryPickerDialogVariant : PreviewParameterProvider<Country> {
     override val values = sequenceOf(Country.Serbia, Country.Serbia, Country.India)
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "CategoriesDialog Preview")
 @Composable
 fun CategoriesDialogPreview(
     @PreviewParameter(CategoriesDialogVariant::class) category: ProductCategory
@@ -250,15 +231,8 @@ fun CategoriesDialogPreview(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(8.dp)
         ) {
-            Text(
-                text = "CategoriesDialog",
-                fontSize = FontSize.REGULAR,
-                fontWeight = FontWeight.SemiBold
-            )
-
             CategoriesDialog(
                 category = category,
                 onDismiss = {},
@@ -278,7 +252,7 @@ class CategoriesDialogVariant : PreviewParameterProvider<ProductCategory> {
     )
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "InfoCard Preview")
 @Composable
 fun InfoCardPreview(
     @PreviewParameter(InfoCardVariant::class) image: DrawableResource
@@ -287,15 +261,9 @@ fun InfoCardPreview(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            Text(
-                text = "InfoCard",
-                fontSize = FontSize.REGULAR,
-                fontWeight = FontWeight.SemiBold
-            )
-
+                .padding(8.dp)
+        )
+        {
             InfoCard(image = image, title = "InfoTitle", subtitle = "InfoSubtitle")
         }
     }
@@ -305,7 +273,7 @@ class InfoCardVariant : PreviewParameterProvider<DrawableResource> {
     override val values = sequenceOf(Resources.Image.ShoppingCart, Resources.Image.Cat)
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "ErrorCard Preview")
 @Composable
 fun ErrorCardPreview(
     @PreviewParameter(ErrorCardVariant::class) message: String
@@ -315,15 +283,8 @@ fun ErrorCardPreview(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(8.dp)
         ) {
-            Text(
-                text = "InfoCard",
-                fontSize = FontSize.REGULAR,
-                fontWeight = FontWeight.SemiBold
-            )
-
             ErrorCard(message = message)
         }
     }
@@ -331,5 +292,34 @@ fun ErrorCardPreview(
 
 class ErrorCardVariant : PreviewParameterProvider<String> {
     override val values = sequenceOf("Country not found", "Category not found")
+}
+
+@Preview(showBackground = true, name = "QuantityCounter Preview")
+@Composable
+fun QuantityCounterPreview(
+    @PreviewParameter(QuantityCounterSizeProvider::class) size: QuantityCounterSize
+) {
+    var count by remember { mutableStateOf(1) }
+    MaterialTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            QuantityCounter(
+                size = size,
+                value = count,
+                onMinusClick = { count = it },
+                onPlusClick = { count = it }
+            )
+        }
+    }
+}
+
+class QuantityCounterSizeProvider : PreviewParameterProvider<QuantityCounterSize> {
+    override val values = sequenceOf(
+        QuantityCounterSize.Small,
+        QuantityCounterSize.Large
+    )
 }
 
