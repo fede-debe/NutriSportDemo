@@ -2,6 +2,7 @@ package com.federico.di
 
 import com.federico.admin_panel.AdminPanelViewModel
 import com.federico.auth.AuthViewModel
+import com.federico.cart.CartViewModel
 import com.federico.data.AdminRepositoryImpl
 import com.federico.data.CustomerRepositoryImpl
 import com.federico.data.domain.AdminRepository
@@ -35,6 +36,7 @@ val sharedModule = module {
     viewModelOf(::AdminPanelViewModel)
     viewModelOf(::ProductsOverviewViewModel)
     viewModelOf(::DetailsViewModel)
+    viewModelOf(::CartViewModel)
 }
 
 /** the reason why I'm using a targetModule is because that I need to provide
