@@ -131,6 +131,7 @@ class ProductRepositoryImpl: ProductRepository {
                 if (userId != null) {
                     val database = Firebase.firestore
                     database.collection(collectionPath = "product")
+                        // we don't store the entire object, only the name of the enum constant
                         .where { "category" equalTo category.name }
                         .snapshots
                         .collectLatest { query ->
