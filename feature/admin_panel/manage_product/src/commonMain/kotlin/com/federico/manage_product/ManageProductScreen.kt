@@ -172,7 +172,7 @@ fun ManageProductScreen(
     onUpdateDescription: (String) -> Unit,
     onUpdateWeight: (String) -> Unit,
     onUpdateFlavors: (String) -> Unit,
-    onUpdatePrice: (String) -> Unit,
+    onUpdatePrice: (Double) -> Unit,
     onUpdateIsNew: (Boolean) -> Unit,
     onUpdateIsPopular: (Boolean) -> Unit,
     onUpdateIsDiscounted: (Boolean) -> Unit,
@@ -407,7 +407,7 @@ fun ManageProductScreen(
                         value = "${screenState.price}",
                         onValueChange = { value ->
                             if (value.isEmpty() || value.toDoubleOrNull() != null) {
-                                onUpdatePrice(value)
+                                onUpdatePrice(value.toDoubleOrNull() ?: 0.0)
                             }
                         },
                         placeholder = "Price",

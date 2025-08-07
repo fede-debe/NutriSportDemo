@@ -63,7 +63,7 @@ class ManageProductScreenPreviewProvider : PreviewParameterProvider<ManageProduc
                 category = ProductCategory.Protein,
                 weight = null,
                 flavors = "",
-                price = null,
+                price = 0.0,
                 isNew = false,
                 isPopular = false,
                 isDiscounted = false
