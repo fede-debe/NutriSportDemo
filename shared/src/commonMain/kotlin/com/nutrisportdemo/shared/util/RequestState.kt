@@ -55,7 +55,7 @@ fun <T> RequestState<T>.DisplayResult(
     backgroundColor: Color? = null
 ) {
     AnimatedContent(
-        modifier = Modifier.background(color = backgroundColor ?: Color.Unspecified),
+        modifier = modifier.background(color = backgroundColor ?: Color.Unspecified),
         targetState = this,
         transitionSpec = {
             transitionSpec ?: (EnterTransition.None togetherWith ExitTransition.None)

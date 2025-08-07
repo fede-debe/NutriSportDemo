@@ -160,6 +160,11 @@ fun AdminPanelScreen(navigateToManageProduct: (String?) -> Unit, navigateBack: (
         }
     ) { padding ->
         products.value.DisplayResult(
+            modifier = Modifier
+                .padding(
+                    top = padding.calculateTopPadding(),
+                    bottom = padding.calculateBottomPadding()
+                ),
             onLoading = {
                 LoadingCard(modifier = Modifier.fillMaxSize())
             },
@@ -170,10 +175,7 @@ fun AdminPanelScreen(navigateToManageProduct: (String?) -> Unit, navigateBack: (
                     if (products.isNotEmpty()) {
                         LazyColumn(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .padding(
-                                    top = padding.calculateTopPadding(),
-                                ),
+                                .fillMaxSize(),
                             contentPadding = PaddingValues(
                                 top = 12.dp,
                                 start = 12.dp,
