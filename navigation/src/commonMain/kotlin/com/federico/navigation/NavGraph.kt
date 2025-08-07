@@ -7,10 +7,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.federico.admin_panel.AdminPanelScreen
 import com.federico.auth.AuthScreen
+import com.federico.category_search.CategorySearchScreen
 import com.federico.details.DetailsScreen
 import com.federico.home.HomeGraphScreen
 import com.federico.manage_product.ManageProductScreen
 import com.federico.profile.ProfileScreen
+import com.nutrisportdemo.shared.domain.ProductCategory
 import com.nutrisportdemo.shared.navigation.Screen
 
 @Composable
@@ -40,6 +42,9 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
                 },
                 navigateToDetails = { productId ->
                     navController.navigate(Screen.Details(productId = productId))
+                },
+                navigateToCategorySearch = { category ->
+                    navController.navigate(Screen.CategorySearch(category = category))
                 })
         }
         composable<Screen.Profile> {
@@ -73,6 +78,18 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
             DetailsScreen(
                 navigateBack = {
                     /** pop our current screen from the back stack and navigate to the previous screen (HomeGraph) */
+                    navController.navigateUp()
+                }
+            )
+        }
+        composable<Screen.CategorySearch> {
+            val category = ProductCategory.valueOf(it.toRoute<Screen.CategorySearch>().category)
+            CategorySearchScreen(
+                category = category,
+                navigateToDetails = { productId ->
+                    navController.navigate(Screen.Details(productId = productId))
+                },
+                navigateBack = {
                     navController.navigateUp()
                 }
             )
