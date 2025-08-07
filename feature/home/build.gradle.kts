@@ -49,6 +49,7 @@ kotlin {
             implementation(project(":feature:home:products_overview"))
             implementation(project(":feature:home:cart"))
             implementation(project(":feature:home:categories"))
+            implementation(project(":feature:home:categories:category_search"))
 
         }
         commonTest.dependencies {
