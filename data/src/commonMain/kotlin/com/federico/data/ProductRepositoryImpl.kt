@@ -1,5 +1,6 @@
-package com.federico.data.domain
+package com.federico.data
 
+import com.federico.data.domain.ProductRepository
 import com.federico.mapper.toProductModel
 import com.nutrisportdemo.shared.domain.Product
 import com.nutrisportdemo.shared.domain.ProductCategory
@@ -25,7 +26,8 @@ class ProductRepositoryImpl: ProductRepository {
                         .where { "isDiscounted" equalTo true }
                         .snapshots
                         .collectLatest { query ->
-                            val products = query.documents.map { document -> document.toProductModel() }
+                            val products =
+                                query.documents.map { document -> document.toProductModel() }
                             send(RequestState.Success(data = products.map { it.copy(title = it.title.uppercase()) }))
                         }
                 } else {
@@ -90,6 +92,7 @@ class ProductRepositoryImpl: ProductRepository {
                 if (userId != null) {
                     val database = Firebase.firestore
                     val productCollection = database.collection(collectionPath = "product")
+
                     /**
                      * creating multiple chunks because firebase query doesn't not support querying more
                      * than 10 items at once. We can't have more than 10 ids in a query.
@@ -108,7 +111,8 @@ class ProductRepositoryImpl: ProductRepository {
                             .where { "id" inArray chunk }
                             .snapshots
                             .collectLatest { query ->
-                                val products = query.documents.map { document -> document.toProductModel() }
+                                val products =
+                                    query.documents.map { document -> document.toProductModel() }
                                 allProducts.addAll(products.map { it.copy(title = it.title.uppercase()) })
 
                                 if (index == chunks.lastIndex) {
@@ -135,7 +139,8 @@ class ProductRepositoryImpl: ProductRepository {
                         .where { "category" equalTo category.name }
                         .snapshots
                         .collectLatest { query ->
-                            val products = query.documents.map { document -> document.toProductModel() }
+                            val products =
+                                query.documents.map { document -> document.toProductModel() }
                             send(RequestState.Success(products.map { it.copy(title = it.title.uppercase()) }))
                         }
                 } else {
