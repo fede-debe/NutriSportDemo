@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import com.federico.admin_panel.AdminPanelScreen
 import com.federico.auth.AuthScreen
 import com.federico.category_search.CategorySearchScreen
+import com.federico.checkout.CheckoutScreen
 import com.federico.details.DetailsScreen
 import com.federico.home.HomeGraphScreen
 import com.federico.manage_product.ManageProductScreen
@@ -45,6 +46,9 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
                 },
                 navigateToCategorySearch = { category ->
                     navController.navigate(Screen.CategorySearch(category = category))
+                },
+                navigateToCheckout = { totalAmount ->
+                    navController.navigate(Screen.Checkout(totalAmount = totalAmount))
                 })
         }
         composable<Screen.Profile> {
@@ -91,6 +95,18 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
                 },
                 navigateBack = {
                     navController.navigateUp()
+                }
+            )
+        }
+        composable<Screen.Checkout> {
+            val totalAmount = it.toRoute<Screen.Checkout>().totalAmount
+            CheckoutScreen(
+                totalAmount = totalAmount.toDoubleOrNull() ?: 0.0,
+                navigateBack = {
+                    navController.navigateUp()
+                },
+                navigateToPaymentCompleted = { isSuccess, error ->
+                    navController.navigate(Screen.PaymentCompleted(isSuccess, error))
                 }
             )
         }
