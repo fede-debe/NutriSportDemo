@@ -12,22 +12,27 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.nutrisportdemo.shared.Alpha
 import com.nutrisportdemo.shared.ButtonDisabled
 import com.nutrisportdemo.shared.ButtonPrimary
+import com.nutrisportdemo.shared.ButtonSecondary
 import com.nutrisportdemo.shared.FontSize
+import com.nutrisportdemo.shared.IconPrimary
+import com.nutrisportdemo.shared.Resources
 import com.nutrisportdemo.shared.TextPrimary
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun PrimaryButton(
-    text: String,
     modifier: Modifier = Modifier,
+    text: String,
     icon: DrawableResource? = null,
     enabled: Boolean = true,
+    secondary: Boolean = false,
     onClick: () -> Unit,
 ) {
     Button(
@@ -36,23 +41,23 @@ fun PrimaryButton(
         enabled = enabled,
         shape = RoundedCornerShape(size = 6.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = ButtonPrimary,
+            containerColor = if (secondary) ButtonSecondary else ButtonPrimary,
             contentColor = TextPrimary,
             disabledContainerColor = ButtonDisabled,
             disabledContentColor = TextPrimary.copy(alpha = Alpha.DISABLED)
         ),
-        contentPadding = PaddingValues(20.dp)
+        contentPadding = PaddingValues(all = 20.dp)
     ) {
         if (icon != null) {
             Icon(
                 modifier = Modifier.size(14.dp),
                 painter = painterResource(icon),
-                contentDescription = "Button icon"
+                contentDescription = "Button icon",
+                tint = if (icon == Resources.Image.PaypalLogo) Color.Unspecified
+                else IconPrimary
             )
         }
-
         Spacer(modifier = Modifier.width(12.dp))
-
         Text(
             text = text,
             fontSize = FontSize.REGULAR,
