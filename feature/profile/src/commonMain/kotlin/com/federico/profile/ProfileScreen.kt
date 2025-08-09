@@ -95,7 +95,7 @@ fun ProfileScreen(
                                     modifier = Modifier.weight(1f),
                                     firstName = firstName,
                                     country = country,
-                                    onCountrySelected = viewModel::updateCountry,
+                                    onCountrySelect = viewModel::updateCountry,
                                     onFirstNameChange = viewModel::updateFirstName,
                                     lastName = lastName,
                                     onLastNameChange = viewModel::updateLastName,

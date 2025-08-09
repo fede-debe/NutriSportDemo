@@ -125,7 +125,7 @@ fun ProfileFormPreview(
 
             ProfileForm(
                 country = profile.country,
-                onCountrySelected = {},
+                onCountrySelect = {},
                 firstName = profile.firstName,
                 onFirstNameChange = {},
                 lastName = profile.lastName,

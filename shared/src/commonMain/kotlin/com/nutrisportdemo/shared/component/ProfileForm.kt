@@ -27,7 +27,7 @@ import com.nutrisportdemo.shared.domain.Country
 fun ProfileForm(
     modifier: Modifier = Modifier,
     country: Country,
-    onCountrySelected: (Country) -> Unit,
+    onCountrySelect: (Country) -> Unit,
     firstName: String,
     onFirstNameChange: (String) -> Unit,
     lastName: String,
@@ -46,7 +46,7 @@ fun ProfileForm(
     AnimatedVisibility(visible = showCountryDialog) {
         CountryPickerDialog(country = country, onConfirmClick = { selectedCountry ->
             showCountryDialog = false
-            onCountrySelected(selectedCountry)
+            onCountrySelect(selectedCountry)
 
         }, onDismiss = {
             showCountryDialog = false
