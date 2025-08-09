@@ -4,12 +4,15 @@ import com.federico.admin_panel.AdminPanelViewModel
 import com.federico.auth.AuthViewModel
 import com.federico.cart.CartViewModel
 import com.federico.category_search.CategorySearchViewModel
+import com.federico.checkout.CheckoutViewModel
 import com.federico.data.AdminRepositoryImpl
 import com.federico.data.CustomerRepositoryImpl
+import com.federico.data.OrderRepositoryImpl
 import com.federico.data.domain.AdminRepository
 import com.federico.data.domain.CustomerRepository
 import com.federico.data.domain.ProductRepository
-import com.federico.data.domain.ProductRepositoryImpl
+import com.federico.data.ProductRepositoryImpl
+import com.federico.data.domain.OrderRepository
 import com.federico.details.DetailsViewModel
 import com.federico.home.HomeGraphViewModel
 import com.federico.manage_product.ManageProductViewModel
@@ -30,6 +33,7 @@ val sharedModule = module {
     single<CustomerRepository> { CustomerRepositoryImpl() }
     single<AdminRepository> { AdminRepositoryImpl() }
     single<ProductRepository> { ProductRepositoryImpl() }
+    single<OrderRepository> { OrderRepositoryImpl(get()) }
     viewModelOf(::AuthViewModel)
     viewModelOf(::HomeGraphViewModel)
     viewModelOf(::ProfileViewModel)
@@ -39,6 +43,7 @@ val sharedModule = module {
     viewModelOf(::DetailsViewModel)
     viewModelOf(::CartViewModel)
     viewModelOf(::CategorySearchViewModel)
+    viewModelOf(::CheckoutViewModel)
 }
 
 /** the reason why I'm using a targetModule is because that I need to provide
