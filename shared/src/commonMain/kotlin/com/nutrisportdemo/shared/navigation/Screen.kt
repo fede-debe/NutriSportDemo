@@ -30,4 +30,16 @@ sealed class Screen {
     data class Details(
         val productId: String
     ) : Screen()
+
+    @Serializable
+    data class Checkout(
+        val totalAmount: String
+    ) : Screen()
+
+    @Serializable
+    data class PaymentCompleted(
+        val isSuccess: Boolean? = null,
+        val error: String? = null,
+        val token: String? = null
+    ) : Screen()
 }
