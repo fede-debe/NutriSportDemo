@@ -16,6 +16,7 @@ import com.federico.data.domain.OrderRepository
 import com.federico.details.DetailsViewModel
 import com.federico.home.HomeGraphViewModel
 import com.federico.manage_product.ManageProductViewModel
+import com.federico.payment_completed.PaymentViewModel
 import com.federico.products_overview.ProductsOverviewViewModel
 import com.federico.profile.ProfileViewModel
 import org.koin.core.KoinApplication
@@ -44,6 +45,7 @@ val sharedModule = module {
     viewModelOf(::CartViewModel)
     viewModelOf(::CategorySearchViewModel)
     viewModelOf(::CheckoutViewModel)
+    viewModelOf(::PaymentViewModel)
 }
 
 /** the reason why I'm using a targetModule is because that I need to provide
