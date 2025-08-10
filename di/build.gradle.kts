@@ -50,6 +50,7 @@ kotlin {
             implementation(project(":feature:home:categories:category_search"))
             implementation(project(":feature:profile"))
             implementation(project(":feature:details"))
+            implementation(project(":feature:payment_completed"))
             implementation(project(":feature:admin_panel"))
             implementation(project(":feature:admin_panel:manage_product"))
             implementation(project(":data"))

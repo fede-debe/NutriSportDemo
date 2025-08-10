@@ -12,6 +12,7 @@ import com.federico.checkout.CheckoutScreen
 import com.federico.details.DetailsScreen
 import com.federico.home.HomeGraphScreen
 import com.federico.manage_product.ManageProductScreen
+import com.federico.payment_completed.PaymentCompleted
 import com.federico.profile.ProfileScreen
 import com.nutrisportdemo.shared.domain.ProductCategory
 import com.nutrisportdemo.shared.navigation.Screen
@@ -107,6 +108,17 @@ fun SetupNavigation(startDestination: Screen = Screen.Auth) {
                 },
                 navigateToPaymentCompleted = { isSuccess, error ->
                     navController.navigate(Screen.PaymentCompleted(isSuccess, error))
+                }
+            )
+        }
+        composable<Screen.PaymentCompleted> {
+            PaymentCompleted(
+                navigateBack = {
+                    navController.navigate(Screen.HomeGraph) {
+                        launchSingleTop = true
+                        // Clear backstack completely
+                        popUpTo(0) { inclusive = true }
+                    }
                 }
             )
         }
