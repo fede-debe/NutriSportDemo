@@ -7,12 +7,68 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
+const { onRequest } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
+
+// Secrets you already created in Secret Manager
+const PAYPAL_CLIENT_ID = defineSecret("PAYPAL_CLIENT_ID");
+const PAYPAL_SECRET     = defineSecret("PAYPAL_SECRET");
+
+// Not a secret — sandbox URL is fine to hardcode for now
+const PAYPAL_BASE_URL = "https://api-m.sandbox.paypal.com";
+
+
 // Firestore trigger for new orders
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const admin = require("firebase-admin");
 
 admin.initializeApp();
 const db = admin.firestore();
+
+/* ---------------------- Testable PayPal token endpoint ---------------------- */
+/**
+ * POST https://<region>-<project>.cloudfunctions.net/paypalGetToken
+ * Body: {}    (no payload required)
+ * Returns: { access_token, token_type, expires_in }
+ *
+ * NOTE: for TESTING. In production, you'd usually not return raw tokens.
+ */
+exports.paypalGetToken = onRequest(
+  { secrets: [PAYPAL_CLIENT_ID, PAYPAL_SECRET], cors: true },
+  async (req, res) => {
+    try {
+      if (req.method !== "POST") return res.status(405).send("Use POST");
+
+      const clientId = process.env.PAYPAL_CLIENT_ID;
+      const secret   = process.env.PAYPAL_SECRET;
+
+      const auth = Buffer.from(`${clientId}:${secret}`).toString("base64");
+
+      const r = await fetch(`${PAYPAL_BASE_URL}/v1/oauth2/token`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Basic ${auth}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: "grant_type=client_credentials",
+      });
+
+      const body = await r.json();
+      if (!r.ok) {
+        return res.status(r.status).json(body);
+      }
+
+      return res.json({
+        access_token: body.access_token,
+        token_type: body.token_type,
+        expires_in: body.expires_in,
+      });
+    } catch (e) {
+      console.error("paypalGetToken error:", e);
+      return res.status(500).json({ error: e.message || "Server error" });
+    }
+  }
+);
 
 exports.createEmailDocument = onDocumentCreated("order/{orderId}", async (event) => {
   const snapshot = event.data;
