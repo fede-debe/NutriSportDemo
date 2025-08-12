@@ -53,40 +53,6 @@ class PaypalApi {
     private val _accessToken = MutableStateFlow("")
     val accessToken: StateFlow<String> = _accessToken.asStateFlow()
 
-//    suspend fun fetchAccessToken(
-//        onSuccess: (String) -> Unit,
-//        onError: (String) -> Unit,
-//    ) {
-//        try {
-//            // encode string before request
-//            val authKey = PAYPAL_AUTH_KEY.encodeBase64()
-//            val response = client.post(urlString = PAYPAL_AUTH_ENDPOINT) {
-//                headers {
-//                    /** From the TYPE list, select Basic Auth. */
-//                    append(HttpHeaders.Authorization, "Basic $authKey")
-//                    append(
-//                        HttpHeaders.ContentType,
-//                        ContentType.Application.FormUrlEncoded.toString()
-//                    )
-//                }
-//                /** In the KEY field, enter grant_type.
-//                 * In the VALUE field, enter client_credentials
-//                 * */
-//                setBody("grant_type=client_credentials")
-//            }
-//
-//            if (response.status == HttpStatusCode.OK) {
-//                val tokenResponse = response.body<PaypalTokenResponse>()
-//                _accessToken.value = tokenResponse.accessToken
-//                onSuccess(tokenResponse.accessToken)
-//            } else {
-//                onError("Error while fetching an Access Token: ${response.status} -${response.bodyAsText()}")
-//            }
-//        } catch (e: Exception) {
-//            onError("Error while fetching an Access Token: ${e.message}")
-//        }
-//    }
-
     suspend fun fetchAccessToken(
         onSuccess: (String) -> Unit,
         onError: (String) -> Unit,
