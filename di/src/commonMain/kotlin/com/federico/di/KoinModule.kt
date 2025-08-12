@@ -5,6 +5,7 @@ import com.federico.auth.AuthViewModel
 import com.federico.cart.CartViewModel
 import com.federico.category_search.CategorySearchViewModel
 import com.federico.checkout.CheckoutViewModel
+import com.federico.checkout.domain.PaypalApi
 import com.federico.data.AdminRepositoryImpl
 import com.federico.data.CustomerRepositoryImpl
 import com.federico.data.OrderRepositoryImpl
@@ -35,6 +36,7 @@ val sharedModule = module {
     single<AdminRepository> { AdminRepositoryImpl() }
     single<ProductRepository> { ProductRepositoryImpl() }
     single<OrderRepository> { OrderRepositoryImpl(get()) }
+    single<PaypalApi> { PaypalApi() }
     viewModelOf(::AuthViewModel)
     viewModelOf(::HomeGraphViewModel)
     viewModelOf(::ProfileViewModel)
