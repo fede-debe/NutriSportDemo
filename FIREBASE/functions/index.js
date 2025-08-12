@@ -67,7 +67,6 @@ exports.createEmailDocument = onDocumentCreated("order/{orderId}", async (event)
 
 const BRAND = {
   name: "NutriSportDemo",
-  // palette from your app:
   bg: "#FAFAFA",           // GrayLighter
   cardBg: "#FFFFFF",       // White
   headerBg: "#000000",     // Black
