@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    /** needed because we are using the ktor.client */
+    alias(libs.plugins.serialization)
 }
 
 kotlin {
