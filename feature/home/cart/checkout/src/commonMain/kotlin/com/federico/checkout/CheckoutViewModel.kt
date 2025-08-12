@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.federico.checkout.domain.PaypalApi
 import com.federico.data.domain.CustomerRepository
 import com.federico.data.domain.OrderRepository
 import com.nutrisportdemo.shared.domain.CartItem
@@ -35,7 +36,7 @@ class CheckoutViewModel(
     private val customerRepository: CustomerRepository,
     private val orderRepository: OrderRepository,
     private val savedStateHandle: SavedStateHandle,
-//    private val paypalApi: PaypalApi,
+    private val paypalApi: PaypalApi,
 ) : ViewModel() {
     var screenReady: RequestState<Unit> by mutableStateOf(RequestState.Loading)
     var screenState: CheckoutScreenState by mutableStateOf(CheckoutScreenState())
@@ -52,16 +53,17 @@ class CheckoutViewModel(
         }
 
     init {
-//        viewModelScope.launch {
-//            paypalApi.fetchAccessToken(
-//                onSuccess = { token ->
-//                    println("TOKEN RECEIVED: $token")
-//                },
-//                onError = { message ->
-//                    println(message)
-//                }
-//            )
-//        }
+        /** separate coroutine for this call */
+        viewModelScope.launch {
+            paypalApi.fetchAccessToken(
+                onSuccess = { token ->
+                    println("TOKEN RECEIVED: $token")
+                },
+                onError = { message ->
+                    println(message)
+                }
+            )
+        }
         viewModelScope.launch {
             customerRepository.readCustomerFlow().collectLatest { data ->
                 if (data.isSuccess()) {
