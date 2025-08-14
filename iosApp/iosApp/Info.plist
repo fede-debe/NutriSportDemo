@@ -11,6 +11,7 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>com.federico.nutrisportdemo</string>
 				<string>com.googleusercontent.apps.649626202936-2as9og80tvuee4rqf969bd0ctg166rgo</string>
 			</array>
 			<key>CFBundleURLName</key>
