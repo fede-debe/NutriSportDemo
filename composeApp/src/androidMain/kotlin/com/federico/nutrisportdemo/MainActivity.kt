@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.nutrisportdemo.shared.util.IntentHandler
+import com.nutrisportdemo.shared.util.PreferencesRepository
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
@@ -42,22 +43,7 @@ class MainActivity : ComponentActivity() {
         val isCancelled = uri?.getQueryParameter("cancel")
         val token = uri?.getQueryParameter("token")
 
-//        PreferencesRepository.savePayPalData(
-//            isSuccess = isSuccess?.toBooleanStrictOrNull(),
-//            error = if (isCancelled == "null") null
-//            else "Payment has been canceled.",
-//            token = token
-//        )
-
-        println("SUCCESS: $isSuccess")
-        println("CANCELLED: $isCancelled")
-//        println("TOKEN: $token")
-
-        /** Avoid throwing an exceptions by using .toBooleanStrictOrNull()
-         *
-         * When new intent is received, we update the navigateToPaymentCompleted property,
-         * and this property will contains the screen we want to navigate to */
-        intentHandler.navigateToPaymentCompleted(
+        PreferencesRepository.savePayPalData(
             isSuccess = isSuccess?.toBooleanStrictOrNull(),
             error = if (isCancelled == "null") null
             else "Payment has been canceled.",
