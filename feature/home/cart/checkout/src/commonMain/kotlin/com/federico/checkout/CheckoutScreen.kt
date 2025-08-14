@@ -134,14 +134,14 @@ fun CheckoutScreen(
                         icon = Resources.Image.PaypalLogo,
                         enabled = isFormValid,
                         onClick = {
-//                            viewModel.payWithPayPal(
-//                                onSuccess = {
-//
-//                                },
-//                                onError = { message ->
-//                                    messageBarState.addError(message)
-//                                }
-//                            )
+                            viewModel.payWithPayPal(
+                                onSuccess = {
+
+                                },
+                                onError = { message ->
+                                    messageBarState.addError(message)
+                                }
+                            )
                         }
                     )
                     Spacer(modifier = Modifier.height(12.dp))

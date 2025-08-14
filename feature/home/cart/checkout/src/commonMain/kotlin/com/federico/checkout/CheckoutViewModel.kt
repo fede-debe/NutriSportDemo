@@ -6,7 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.federico.checkout.domain.Amount
 import com.federico.checkout.domain.PaypalApi
+import com.federico.checkout.domain.ShippingAddress
 import com.federico.data.domain.CustomerRepository
 import com.federico.data.domain.OrderRepository
 import com.nutrisportdemo.shared.domain.CartItem
@@ -35,7 +37,7 @@ data class CheckoutScreenState(
 class CheckoutViewModel(
     private val customerRepository: CustomerRepository,
     private val orderRepository: OrderRepository,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val paypalApi: PaypalApi,
 ) : ViewModel() {
     var screenReady: RequestState<Unit> by mutableStateOf(RequestState.Loading)
@@ -51,6 +53,8 @@ class CheckoutViewModel(
                     address?.length in 3..50 &&
                     phoneNumber?.number?.length in 5..30
         }
+
+    val totalAmount = savedStateHandle.get<String>("totalAmount")
 
     init {
         /** separate coroutine for this call */
@@ -173,7 +177,7 @@ class CheckoutViewModel(
                 order = Order(
                     customerId = screenState.id,
                     items = screenState.cart,
-                    totalAmount = savedStateHandle.get<String>("totalAmount")?.toDoubleOrNull()
+                    totalAmount = totalAmount?.toDoubleOrNull()
                         ?: 0.0
                 ),
                 onSuccess = onSuccess,
@@ -182,32 +186,31 @@ class CheckoutViewModel(
         }
     }
 
-//    fun payWithPayPal(
-//        onSuccess: () -> Unit,
-//        onError: (String) -> Unit,
-//    ) {
-//        val totalAmount = savedStateHandle.get<String>("totalAmount")
-//        if (totalAmount != null) {
-//            viewModelScope.launch {
-//                paypalApi.beginCheckout(
-//                    amount = Amount(
-//                        currencyCode = "USD",
-//                        value = totalAmount
-//                    ),
-//                    fullName = "${screenState.firstName} ${screenState.lastName}",
-//                    shippingAddress = ShippingAddress(
-//                        addressLine1 = screenState.address ?: "Unknown address",
-//                        city = screenState.city ?: "Unknown city",
-//                        state = screenState.country.name,
-//                        postalCode = screenState.postalCode.toString(),
-//                        countryCode = screenState.country.code
-//                    ),
-//                    onSuccess = onSuccess,
-//                    onError = onError
-//                )
-//            }
-//        } else {
-//            onError("Total amount couldn't be calculated.")
-//        }
-//    }
+    fun payWithPayPal(
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit,
+    ) {
+        if (totalAmount != null) {
+            viewModelScope.launch {
+                paypalApi.beginCheckout(
+                    amount = Amount(
+                        currencyCode = "USD",
+                        value = totalAmount
+                    ),
+                    fullName = "${screenState.firstName} ${screenState.lastName}",
+                    shippingAddress = ShippingAddress(
+                        addressLine1 = screenState.address ?: "Unknown address",
+                        city = screenState.city ?: "Unknown city",
+                        state = screenState.country.name,
+                        postalCode = screenState.postalCode.toString(),
+                        countryCode = screenState.country.code
+                    ),
+                    onSuccess = onSuccess,
+                    onError = onError
+                )
+            }
+        } else {
+            onError("Total amount couldn't be calculated.")
+        }
+    }
 }
