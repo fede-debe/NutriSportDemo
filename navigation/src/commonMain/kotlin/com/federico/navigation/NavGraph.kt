@@ -1,6 +1,9 @@
 package com.federico.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,10 +19,36 @@ import com.federico.payment_completed.PaymentCompleted
 import com.federico.profile.ProfileScreen
 import com.nutrisportdemo.shared.domain.ProductCategory
 import com.nutrisportdemo.shared.navigation.Screen
+import com.nutrisportdemo.shared.util.IntentHandler
+import org.koin.compose.koinInject
 
 @Composable
 fun SetupNavigation(startDestination: Screen = Screen.Auth) {
     val navController = rememberNavController()
+    val intentHandler = koinInject<IntentHandler>()
+    val navigateTo by intentHandler.navigateTo.collectAsState()
+
+    LaunchedEffect(navigateTo) {
+        navigateTo?.let { paymentCompleted ->
+            println("NAVIGATE TO PAYMENT COMPLETED !!!")
+            navController.navigate(paymentCompleted)
+            intentHandler.resetNavigation()
+        }
+    }
+
+//    val preferencesData by PreferencesRepository.readPayPalDataFlow()
+//        .collectAsState(initial = null)
+//
+//    LaunchedEffect(preferencesData) {
+//        preferencesData?.let { paymentCompleted ->
+//            if(paymentCompleted.token != null) {
+//                navController.navigate(paymentCompleted)
+//                PreferencesRepository.reset()
+//            }
+//        }
+//    }
+
+
     NavHost(navController = navController, startDestination = startDestination) {
         composable<Screen.Auth> {
             AuthScreen(navigateToHome = {
