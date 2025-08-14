@@ -117,6 +117,10 @@ class PaypalApi {
             val orderResponse = response.body<OrderResponse>()
             val payerLink = orderResponse.links.firstOrNull { it.rel == "payer-action" }?.href
 
+            /**
+             * Handle the URL in the main thread since we launch the web browser,
+             * and without it we could receive some Exceptions specifically in iOS
+             * */
             withContext(Dispatchers.Main) {
                 handleUrl(
                     url = payerLink,
