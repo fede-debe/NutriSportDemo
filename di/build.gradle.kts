@@ -54,6 +54,7 @@ kotlin {
             implementation(project(":feature:admin_panel"))
             implementation(project(":feature:admin_panel:manage_product"))
             implementation(project(":data"))
+            implementation(project(":shared"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

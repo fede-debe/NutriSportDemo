@@ -41,6 +41,8 @@ kotlin {
 
             implementation(libs.navigation.compose)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
 
             implementation(project(path = ":shared"))
             implementation(project(path = ":feature:auth"))
