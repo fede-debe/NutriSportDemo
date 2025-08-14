@@ -8,13 +8,9 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.nutrisportdemo.shared.util.IntentHandler
 import com.nutrisportdemo.shared.util.PreferencesRepository
-import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
-
-    private val intentHandler: IntentHandler by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
