@@ -47,6 +47,7 @@ class PaymentViewModel(
                 val productIds = cartItems.map { it.productId }
 
                 if (productIds.isEmpty()) {
+                    // default amount if we have any issue
                     flowOf(RequestState.Success(0.0))
                 } else {
                     productRepository.readProductsByIdsFlow(productIds)
