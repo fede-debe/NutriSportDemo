@@ -10,7 +10,7 @@ kotlin = "2.2.0"
 
 navigation = "2.9.0-beta03"
 auth = "2.3.1"
-notifier = "1.5.1"
+notifier = "1.6.0"
 firebase = "2.1.0"
 koin = "4.1.0"
 serialization = "1.9.0"
@@ -37,7 +37,7 @@ navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-co
 # KMP Auth & Notifier
 kmpauth-google = { module = "io.github.mirzemehdi:kmpauth-google", version.ref = "auth" }
 kmpauth-firebase = { module = "io.github.mirzemehdi:kmpauth-firebase", version.ref = "auth" }
-kmpnotifier = { module = "io.github.mirzemehdi:kmpnotifier", version.ref = "notifier" }
+kmp-notifier = { module = "io.github.mirzemehdi:kmpnotifier", version.ref = "notifier" }
 
 # GitLive Firebase
 firebase-app = { module = "dev.gitlive:firebase-app", version.ref = "firebase" }
