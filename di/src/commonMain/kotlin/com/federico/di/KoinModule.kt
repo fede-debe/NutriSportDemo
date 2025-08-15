@@ -20,7 +20,6 @@ import com.federico.manage_product.ManageProductViewModel
 import com.federico.payment_completed.PaymentViewModel
 import com.federico.products_overview.ProductsOverviewViewModel
 import com.federico.profile.ProfileViewModel
-import com.nutrisportdemo.shared.util.IntentHandler
 import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
 import org.koin.core.module.Module
@@ -37,7 +36,6 @@ val sharedModule = module {
     single<AdminRepository> { AdminRepositoryImpl() }
     single<ProductRepository> { ProductRepositoryImpl() }
     single<OrderRepository> { OrderRepositoryImpl(get()) }
-    single<IntentHandler> { IntentHandler() }
     single<PaypalApi> { PaypalApi() }
     viewModelOf(::AuthViewModel)
     viewModelOf(::HomeGraphViewModel)
